@@ -1,4 +1,4 @@
-const { getAllAds, postAds, updateAds, getById } = require('../models/adsModel');
+const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
 
 
 const getAds = async (req, res) => {
@@ -102,9 +102,43 @@ const actualizarAds = async (req, res) => {
 };
 
 
+const deleteAds = async (req, res) => {
+    try {
+        let data ;
+        const id_anuncio = req.params.id_anuncio;
+        if (isNaN(id_anuncio)) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Id invalido.',
+            });
+        }
+
+         data = await borrarAd(id_anuncio);
+
+        if (data) {
+            res.status(200).json({
+                ok: true,
+                msg: 'Anuncio retirado',
+            });
+        } else {
+            res.status(404).json({
+                ok: false,
+                msg: 'El anuncio no existe',
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'No pilla la query',
+        });
+    }
+};
+
 
 module.exports = {
     getAds,
     createAds,
-    actualizarAds
+    actualizarAds,
+    deleteAds
 }

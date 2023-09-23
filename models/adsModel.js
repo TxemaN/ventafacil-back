@@ -60,30 +60,45 @@ const getAllAds= async ()=> {
     return result;
   };
 
-  const updateAds = async (Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor) => {
+  const updateAds = async (Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio) => {
     let client, result;
     try {
         client = await pool.connect();
   
-        const insertQuery = 'INSERT INTO anuncios (Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor) VALUES ($1, $2, $3, $4, $5, $6, $7 ) RETURNING *';
-        const data = await client.query(insertQuery, [Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor]);
+        
+        const data = await client.query(querieAds.byActualizar, [Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio]);
   
         result = data.rows[0]; 
   
     } catch (error) {
         console.error(error);
-        throw new Error('Error al crear la entrada');
+        throw new Error('Error al modificar');
     } finally {
         client.release();
     }
     return result;
   };
 
-
+  const borrarAd = async (id_anuncio) => {
+    let client, result;
+    try {
+      client = await pool.connect();
+      
+      const data = await client.query(querieAds.byBorrarUna, [id_anuncio]);
+      result = data;
+    } catch (error) {
+      console.error(error);
+      throw new Error('No está borrando la query');
+    } finally {
+      client.release();
+    }
+    return result;
+  };
   
   module.exports = {
     getAllAds,
     getById,
     postAds,
-    updateAds
+    updateAds,
+    borrarAd
   }

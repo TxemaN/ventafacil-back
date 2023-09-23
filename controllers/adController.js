@@ -5,8 +5,8 @@ const getAds = async (req, res) => {
     //   
     let data;
     try {
-        const { } = req.body;
-        
+        const { caca} = req.body;
+        if(caca){
             data = await getAllAds();
 
 
@@ -14,11 +14,11 @@ const getAds = async (req, res) => {
             ok: true,
             data
         });
-    } catch (error) {
+    }  } catch (error) {
         console.log(error)
         res.status(500).json({
             ok: true,
-            msg: 'Contacte el adm'
+            msg: 'No pilla la query'
         });
 
     }

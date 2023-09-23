@@ -1,4 +1,4 @@
-const querieEntries = require('./queries.js')
+const {querieAds} = require('./queries.js')
 const {pool} = require('../utils/connectPool')
 
 const getAllAds= async ()=> {

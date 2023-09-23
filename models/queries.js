@@ -1,6 +1,6 @@
 const querieAds = {
     
-    byAll : 'SELECT * FROM entries',
+    byAll : 'SELECT * FROM anuncios',
     
     };
 

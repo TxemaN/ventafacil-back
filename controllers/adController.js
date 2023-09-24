@@ -1,6 +1,6 @@
 const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
 const { postPics } = require('../models/picModel');
-const {uploadImagen} = require('../helpers/multerHelper')
+
 
 
 const getAds = async (req, res) => {
@@ -59,10 +59,10 @@ const createAds = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
-   await uploadImagen
+   
     let data;
     try {
-        const { id_anuncio, ruta_foto } = req.body;
+        const { id_anuncio, ruta_foto=`uploads/${req.file.filename}` } = req.body;
 
         if (!id_anuncio || !ruta_foto) {
             return res.status(400).json({

@@ -1,5 +1,5 @@
 
-const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById ,updatePassword} = require('../models/userModel');
+const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById, updatePassword } = require('../models/userModel');
 const bcrypt = require('bcrypt');
 
 /**
@@ -20,8 +20,8 @@ const userCreateControl = async (req, res) => {
         contacto,
         provincia,
         ciudad,
-        pin, 
-        confirmPin, 
+        pin,
+        confirmPin,
     } = req.body;
 
     console.log('Datos recibidos de la solicitud:', req.body);
@@ -49,7 +49,7 @@ const userCreateControl = async (req, res) => {
             contacto,
             provincia,
             ciudad,
-            pin: hashedPin, 
+            pin: hashedPin,
         };
 
         const newUser = await createUser(user);
@@ -77,7 +77,7 @@ const userAllCOntrol = async (req, res) => {
         res.status(200).json(users);
     } catch (error) {
         console.error('Error: ', error.msg);
-        res.status(500).send('Contacte al administrador');
+        res.status(500).send('Contacte con el administrador.');
     }
 };
 
@@ -101,17 +101,17 @@ const userBuscarControl = async (req, res) => {
         } else if (email) {
             user = await getUserByEmail(email);
         } else {
-            return res.status(400).send('Ingrese un ID, nombre de usuario o dirección de correo electrónico');
+            return res.status(400).send('Ingrese un ID, nombre de usuario o dirección de correo electrónico.');
         }
 
         if (!user) {
-            return res.status(404).send('Usuario no encontrado');
+            return res.status(404).send('Usuario no encontrado.');
         }
 
         res.status(200).json(user);
     } catch (error) {
         console.error('Error: ', error.msg);
-        res.status(500).send('Contacte al administrador');
+        res.status(500).send('Contacte al administrador.');
     }
 };
 
@@ -130,13 +130,13 @@ const userByIdControl = async (req, res) => {
         const user = await getUserById(req.params.id);
 
         if (!user) {
-            return res.status(404).send('Usuario no encontrado');
+            return res.status(404).send('Usuario no encontrado.');
         }
 
         res.status(200).json(user);
     } catch (error) {
         console.error('Error: ', error.msg);
-        res.status(500).send('Error del servidor');
+        res.status(500).send('Error del servidor.');
     }
 };
 
@@ -157,13 +157,38 @@ const userUpdateControl = async (req, res) => {
         const updatedUser = await updateUser(userId, updatedData);
 
         if (!updatedUser) {
-            return res.status(404).send('Usuario no encontrado');
+            return res.status(404).send('Usuario no encontrado.');
         }
 
         res.status(200).json(updatedUser);
     } catch (error) {
         console.error('Error: ', error.msg);
-        res.status(500).send('Contacte con el administrador');
+        res.status(500).send('Contacte con el administrador.');
+    }
+};
+
+
+/**
+ * Controlador para eliminar un usuario por su ID.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} - Una promesa que representa la ejecución de la función.
+ * @throws {Error} Si ocurre un error durante la eliminación del usuario.
+ */
+const userDeleteControl = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const deleted = await deleteUser(userId);
+
+        if (!deleted) {
+            return res.status(404).send('Usuario no encontrado.');
+        }
+
+        res.status(200).send('Usuario eliminado correctamente.');
+    } catch (error) {
+        console.error('Error: ', error.msg);
+        res.status(500).send('Contacte con el administrador.');
     }
 };
 
@@ -181,37 +206,37 @@ const userPasswordControl = async (req, res) => {
     const { currentPin, newPin, confirmPin } = req.body;
 
     try {
-        // Obtenha o usuário do banco de dados com base no ID (você precisará implementar essa função)
+        // Obtiene el usuario desde la BBDD según su ID
         const user = await getUserById(userId);
 
-        // Verifique se o usuário existe
+        // Verifica que el usuario existe
         if (!user) {
-            return res.status(404).send('Usuário não encontrado');
+            return res.status(404).send('Usuario no encontrado');
         }
 
-        // Verifique se a senha atual fornecida é correta
+        // Verifique si la contraseña introducida es correcta
         const pinMatch = await bcrypt.compare(currentPin, user.pin);
 
         if (!pinMatch) {
-            return res.status(400).json({ error: 'Senha atual incorreta' });
+            return res.status(400).json({ error: 'Contraseña introducida incorrecta.' });
         }
 
-        // Verifique se a nova senha e a confirmação coincidem
+        // Verifica que la nueva contraseña y la confirmación coincidan
         if (newPin !== confirmPin) {
-            return res.status(400).json({ error: 'As novas senhas não coincidem' });
+            return res.status(400).json({ error: 'La nueva contraseña y su confirmacion deben coincidir.' });
         }
 
-        // Hash da nova senha
+        // Hash de la nueva contraseña
         const hashedPin = bcrypt.hashSync(newPin, 10);
 
-        // Atualize a senha no banco de dados
+        // Atualiza la contraseña en la BBDD
         const updatedUser = await updatePassword(userId, hashedPin);
 
-        // Inclua uma mensagem de sucesso na resposta
-        res.status(200).json({ ok: true, msg: 'Senha alterada com sucesso' });
+        // Incluye un mensaje de exito en la respuesta
+        res.status(200).json({ ok: true, msg: 'Contraseña modificada con éxito.' });
     } catch (error) {
         console.error('Error: ', error);
-        res.status(500).send('Entre em contato com o admin');
+        res.status(500).send('Contacte con el administrador.');
     }
 };
 

@@ -1,5 +1,5 @@
 const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
-
+const { postPics } = require('../models/picModel');
 
 const getAds = async (req, res) => {
     //   
@@ -46,6 +46,38 @@ const createAds = async (req, res) => {
             });
         } else {
             throw new Error('Error al crear el anuncio');
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Contacte el admin'
+        });
+    }
+};
+
+const uploadImage = async (req, res) => {
+    let data;
+    try {
+        const { id_anuncio, ruta_foto } = req.body;
+        
+        if (!id_anuncio || !ruta_foto) {
+            return res.status(400).json({
+                ok: false,
+                msg: "rellene todos los campos"
+            });
+        }
+
+        data = await postPics(id_anuncio, ruta_foto);
+
+        if (data) {
+            res.status(200).json({
+                ok: true,
+                msg: 'Imagen agregada',
+                data
+            });
+        } else {
+            throw new Error('Error al agreagar la imagen');
         }
     } catch (error) {
         console.log(error);
@@ -139,6 +171,7 @@ const deleteAds = async (req, res) => {
 module.exports = {
     getAds,
     createAds,
+    uploadImage,
     actualizarAds,
     deleteAds
 }

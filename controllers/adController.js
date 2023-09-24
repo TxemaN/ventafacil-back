@@ -1,20 +1,22 @@
 const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
 const { postPics } = require('../models/picModel');
+const {uploadImagen} = require('../helpers/multerHelper')
+
 
 const getAds = async (req, res) => {
     //   
     let data;
     try {
-       
-        
-            data = await getAllAds();
+
+
+        data = await getAllAds();
 
 
         res.status(200).json({
             ok: true,
             data
         });
-     } catch (error) {
+    } catch (error) {
         console.log(error)
         res.status(500).json({
             ok: true,
@@ -27,16 +29,16 @@ const getAds = async (req, res) => {
 const createAds = async (req, res) => {
     let data;
     try {
-        const { Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body;
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica ||!Gasto_Envio_Incluido ||!ID_Vendedor ) {
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !Gasto_Envio_Incluido || !ID_Vendedor) {
             return res.status(400).json({
                 ok: false,
                 msg: "rellene todos los campos"
             });
         }
 
-        data = await postAds(Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor);
+        data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor);
 
         if (data) {
             res.status(200).json({
@@ -57,10 +59,11 @@ const createAds = async (req, res) => {
 };
 
 const uploadImage = async (req, res) => {
+   await uploadImagen
     let data;
     try {
         const { id_anuncio, ruta_foto } = req.body;
-        
+
         if (!id_anuncio || !ruta_foto) {
             return res.status(400).json({
                 ok: false,
@@ -68,8 +71,8 @@ const uploadImage = async (req, res) => {
             });
         }
 
-        data = await postPics(id_anuncio, ruta_foto);
-
+        data = await postPics(id_anuncio, ruta_foto );
+        console.log(ruta_foto)
         if (data) {
             res.status(200).json({
                 ok: true,
@@ -91,21 +94,21 @@ const uploadImage = async (req, res) => {
 const actualizarAds = async (req, res) => {
     let data;
     try {
-        const id_anuncio = req.params.id_anuncio; 
-        const { Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body; 
+        const id_anuncio = req.params.id_anuncio;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body;
 
-        
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica ||!Gasto_Envio_Incluido ||!ID_Vendedor) {
+
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !Gasto_Envio_Incluido || !ID_Vendedor) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El anuncio debe tener todos los campos',
             });
         }
 
-        
+
         const originalData = await getById(id_anuncio);
 
-        
+
         if (Producto === originalData.Producto && Descripcion === originalData.Descripcion) {
             return res.status(200).json({
                 ok: true,
@@ -114,15 +117,15 @@ const actualizarAds = async (req, res) => {
         }
 
         // 
-        data = await updateAds(Producto, Descripcion , Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio);
+        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio);
 
-    
+
         const updatedData = await getById(id_anuncio);
 
         res.status(200).json({
             ok: true,
             msg: 'Anuncio actualizado ',
-            data: updatedData, 
+            data: updatedData,
         });
     } catch (error) {
         console.error(error);
@@ -136,7 +139,7 @@ const actualizarAds = async (req, res) => {
 
 const deleteAds = async (req, res) => {
     try {
-        let data ;
+        let data;
         const id_anuncio = req.params.id_anuncio;
         if (isNaN(id_anuncio)) {
             return res.status(400).json({
@@ -145,7 +148,7 @@ const deleteAds = async (req, res) => {
             });
         }
 
-         data = await borrarAd(id_anuncio);
+        data = await borrarAd(id_anuncio);
 
         if (data) {
             res.status(200).json({

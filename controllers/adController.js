@@ -55,12 +55,12 @@ const getByName = async (req, res) => {
     try {
         const { Producto} = req.body;
 
-        data = await getByNombre("%" + Producto + "%");
+        data = await getByNombre('%' + Producto + '%');
 
 
         res.status(200).json({
             ok: true,
-            data
+            data:data
         });
     } catch (error) {
         console.log(error)

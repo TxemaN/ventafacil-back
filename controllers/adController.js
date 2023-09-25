@@ -1,5 +1,5 @@
 const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
-
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 
 
@@ -51,8 +51,9 @@ const getOneById = async (req, res) => {
 
 const createAds = async (req, res) => {
     let data;
+    let Precio_Stripe;
     try {
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}` } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}`} = req.body;
 
         if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
             return res.status(400).json({
@@ -61,14 +62,31 @@ const createAds = async (req, res) => {
             });
         }
 
-        data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto);
+        data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe);
 
         if (data) {
+
+
             res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',
                 data
-            });
+            })
+            stripe.products.create({
+                name: Producto,
+                description: Descripcion,
+              }).then(product => {
+                stripe.prices.create({
+                  unit_amount: Precio*100,
+                  currency: 'eur',
+                
+                  product: product.id,
+                }).then(price => {
+                  console.log('Success! Here is your  product id: ' + product.id);
+                  console.log('Success! Here is your  price id: ' + price.id);
+                  Precio_Stripe=price.id
+                });
+              });
         } else {
             throw new Error('Error al crear el anuncio');
         }

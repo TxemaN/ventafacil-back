@@ -41,13 +41,13 @@ const getById = async (id_anuncio) => {
 
 
 
-const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto) => {
+const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto]);
+    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe]);
 
     result = data.rows[0];
 

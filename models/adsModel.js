@@ -37,7 +37,26 @@ const getById = async (id_anuncio) => {
   return result
 };
 
+const getByNombre = async (Producto) => {
+  let client, result;
+  try {
+    client = await pool.connect();
 
+    const data = await client.query(querieAds.byName, [Producto]);
+
+    if (data.rows.length === 0) {
+      throw new Error('No se encontró la entrada con el NOMBRE proporcionado');
+    }
+
+    result = await data.rows[0];
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error al buscar la entrada por NOMBRE');
+  } finally {
+    client.release();
+  }
+  return result
+};
 
 
 
@@ -98,6 +117,7 @@ const borrarAd = async (id_anuncio) => {
 module.exports = {
   getAllAds,
   getById,
+  getByNombre,
   postAds,
   updateAds,
   borrarAd

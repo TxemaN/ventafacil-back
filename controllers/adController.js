@@ -26,6 +26,29 @@ const getAds = async (req, res) => {
     }
 };
 
+const getOneById = async (req, res) => {
+    //   
+    let data;
+    try {
+        const id_anuncio = req.params.id_anuncio;
+
+        data = await getById(id_anuncio);
+
+
+        res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query'
+        });
+
+    }
+};
+
 const createAds = async (req, res) => {
     let data;
     try {
@@ -142,6 +165,7 @@ const deleteAds = async (req, res) => {
 
 module.exports = {
     getAds,
+    getOneById,
     createAds,
     actualizarAds,
     deleteAds

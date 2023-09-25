@@ -11,10 +11,12 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({ storage: storage })
-const {getAds, createAds, actualizarAds, deleteAds, uploadImage} = require('../controllers/adController')
+const {getAds, createAds, actualizarAds, deleteAds, getOneById} = require('../controllers/adController')
 
 //getAds
 router.get('/', getAds)
+
+router.get('/:id_anuncio', getOneById)
 
 //createAds
 router.post('/anunciar', upload.single('imagen_anuncio'),  createAds)

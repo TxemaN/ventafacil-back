@@ -70,6 +70,7 @@ const createAds = async (req, res) => {
         let Precio_Stripe = stripePrice.id;
         let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe);
         if (data) {
+            //FFFFFFFF//
             res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',

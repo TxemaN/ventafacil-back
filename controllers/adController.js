@@ -1,4 +1,4 @@
-const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
+const { getAllAds, postAds, updateAds, getById, getByNombre, borrarAd } = require('../models/adsModel');
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 
@@ -44,6 +44,29 @@ const getOneById = async (req, res) => {
         res.status(500).json({
             ok: true,
             msg: 'No pilla la query'
+        });
+
+    }
+};
+
+const getByName = async (req, res) => {
+    //   
+    let data;
+    try {
+        const { Producto} = req.body;
+
+        data = await getByNombre('%' + Producto + '%');
+
+
+        res.status(200).json({
+            ok: true,
+            data:data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por nombre'
         });
 
     }
@@ -174,5 +197,6 @@ module.exports = {
     getOneById,
     createAds,
     actualizarAds,
-    deleteAds
+    deleteAds,
+    getByName
 }

@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
+app.use('/api/v1/ventafacil/ads', require('./routes/adsRoutes'));
 
 app.use('/api/v1/users', require("./routes/userRoutes"));
 

@@ -1,5 +1,5 @@
 const { getAllAds, postAds, updateAds, getById, borrarAd } = require('../models/adsModel');
-const { postPics } = require('../models/picModel');
+
 
 
 
@@ -29,16 +29,16 @@ const getAds = async (req, res) => {
 const createAds = async (req, res) => {
     let data;
     try {
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}` } = req.body;
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !Gasto_Envio_Incluido || !ID_Vendedor) {
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
             return res.status(400).json({
                 ok: false,
                 msg: "rellene todos los campos"
             });
         }
 
-        data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor);
+        data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto);
 
         if (data) {
             res.status(200).json({
@@ -58,47 +58,16 @@ const createAds = async (req, res) => {
     }
 };
 
-const uploadImage = async (req, res) => {
-   
-    let data;
-    try {
-        const { id_anuncio, ruta_foto=`uploads/${req.file.filename}` } = req.body;
 
-        if (!id_anuncio || !ruta_foto) {
-            return res.status(400).json({
-                ok: false,
-                msg: "rellene todos los campos"
-            });
-        }
-
-        data = await postPics(id_anuncio, ruta_foto );
-        console.log(ruta_foto)
-        if (data) {
-            res.status(200).json({
-                ok: true,
-                msg: 'Imagen agregada',
-                data
-            });
-        } else {
-            throw new Error('Error al agreagar la imagen');
-        }
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Contacte el admin'
-        });
-    }
-};
 
 const actualizarAds = async (req, res) => {
     let data;
     try {
         const id_anuncio = req.params.id_anuncio;
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor } = req.body;
 
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !Gasto_Envio_Incluido || !ID_Vendedor) {
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El anuncio debe tener todos los campos',
@@ -117,7 +86,7 @@ const actualizarAds = async (req, res) => {
         }
 
         // 
-        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio);
+        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio);
 
 
         const updatedData = await getById(id_anuncio);
@@ -174,7 +143,6 @@ const deleteAds = async (req, res) => {
 module.exports = {
     getAds,
     createAds,
-    uploadImage,
     actualizarAds,
     deleteAds
 }

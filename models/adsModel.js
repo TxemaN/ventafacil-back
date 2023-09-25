@@ -41,32 +41,32 @@ const getById = async (id_anuncio) => {
 
 
 
-const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor) => {
+const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor]);
+    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto]);
 
     result = data.rows[0];
 
   } catch (error) {
     console.error(error);
-    throw new Error('Error al crear la entrada');
+    throw new Error('Error al crear anuncio');
   } finally {
     client.release();
   }
   return result;
 };
 
-const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio) => {
+const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, Gasto_Envio_Incluido, ID_Vendedor, id_anuncio]);
+    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio]);
 
     result = data.rows[0];
 

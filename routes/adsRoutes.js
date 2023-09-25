@@ -17,7 +17,7 @@ const {getAds, createAds, actualizarAds, deleteAds, uploadImage} = require('../c
 router.get('/', getAds)
 
 //createAds
-router.post('/anunciar', createAds)
+router.post('/anunciar', upload.single('imagen_anuncio'),  createAds)
 
 //updateAds
 
@@ -27,8 +27,7 @@ router.put('/actualizar/:id_anuncio', actualizarAds)
 
 router.delete('/eliminar/:id_anuncio', deleteAds)
 
-//uploadImages
-router.post('/incluirimagen', upload.single('imagen_anuncio'), uploadImage)
+
 
 
 

@@ -1,15 +1,5 @@
-const firebase = require('firebase/app');
-const firebaseConfig = {
-    apiKey: process.env.API_KEY,
-    authDomain: process.env.AUTH_DOMAIN,
-    projectId: process.env.PROJECT_ID,
-    storageBucket: process.env.STORAGE_BUCKET,
-    messagingSenderId: process.env.MSG_SENDER_ID,
-    appId: process.env.API_ID
-};
-// const { initializeApp } = require('firebase/app');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, getIdToken } = require("firebase/auth");
-firebase.initializeApp(firebaseConfig);
+require('../config/firebaseConfig')
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken } = require("firebase/auth");
 
 const register = async (req, res) => {
     const { email, password } = req.body;
@@ -21,6 +11,7 @@ const register = async (req, res) => {
         //Respuesta HTTP 201 Created cuenta creada
         res.status(201).json({
             ok: true,
+            userCreado: userCreado.user,
             message: `Usuario ${email} creado satisfactoriamente`
         });
         //res.send('usuario creado!')
@@ -33,8 +24,8 @@ const register = async (req, res) => {
             });
 
         } else {
-            console.log(error);
-            // Respuesta HTTP 500 Internal Server Error para otros errores
+            console.log('Error:', error);
+            // Respuesta HTTP 500 Internal Server Error
             res.status(500).json({
                 ok: false,
                 message: 'Error interno del servidor'
@@ -54,7 +45,7 @@ const login = async (req, res) => {
         //Respuesta HTTP 200 OK inciado
         res.status(200).json({
             ok: true,
-            userIniciado,
+            userIniciado: userIniciado.user,
             message: 'Sesión iniciada'
         });
         // res.send('sesion iniciada!')
@@ -67,8 +58,8 @@ const login = async (req, res) => {
             });
 
         } else {
-            console.log(error);
-            // Respuesta HTTP 500 Internal Server Error para otros errores
+            console.log('Error:', error);
+            //Respuesta HTTP 500 Internal Server Error
             res.status(500).json({
                 ok: false,
                 message: 'Error interno del servidor'
@@ -79,7 +70,62 @@ const login = async (req, res) => {
     };
 };
 
-const renew = async (req, res) => {
+const changePass = async (req, res) => {
+    const newPassword = req.body.newPassword;
+    const auth = getAuth();
+    const user = auth.currentUser
+
+    try {
+
+        if (user) {
+            await updatePassword(auth, newPassword);
+
+            //Respuesta HTTP 200 OK contraseña actualizada
+            res.status(200).json({
+                ok: true,
+                message: 'Contraseña actualizada.'
+            });
+        } else {
+            //Respuesta HTTP 401 Unauthorized si no está autenticado
+            res.status(401).json({
+                ok: false,
+                message: 'Usuario no autenticado, inicia sesión de nuevo.'
+            });
+        };
+
+    } catch (error) {
+        console.log('Error:', error)
+        // Respuesta HTTP 500 Internal Server Error
+        res.status(500).json({
+            ok: false,
+            message: 'Error interno del servidor'
+        });
+    };
+};
+
+const recoverPass = async (req, res) => {
+    const { email } = req.body;
+    const auth = getAuth();
+
+    try {
+        await sendPasswordResetEmail(auth, email);
+        //Respuesta HTTP 200 OK correo enviado
+        res.status(200).json({
+            ok: true,
+            message: `Correo de recuperación enviado, si ${email} tiene cuenta asociada, recibirá un email de recuperacion.`
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        // Respuesta HTTP 500 Internal Server Error
+        res.status(500).json({
+            ok: false,
+            message: 'Error al enviar el correo de restablecimiento de contraseña.'
+        });
+    };
+};
+
+const renewToken = async (req, res) => {
     const auth = getAuth();
     const user = auth.currentUser
 
@@ -106,7 +152,7 @@ const renew = async (req, res) => {
 
             } else {
                 console.log(error);
-                //Respuesta HTTP 500 Internal Server Error para otros errores
+                //Respuesta HTTP 500 Internal Server Error
                 res.status(500).json({
                     ok: false,
                     message: 'Error del servidor'
@@ -127,5 +173,7 @@ const renew = async (req, res) => {
 module.exports = {
     register,
     login,
-    renew
+    changePass,
+    recoverPass,
+    renewToken
 };

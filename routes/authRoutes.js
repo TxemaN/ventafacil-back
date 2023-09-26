@@ -1,5 +1,5 @@
 const express = require("express");
-const { register, login, renew } = require('../controllers/authController');
+const { register, login, changePass, recoverPass, renewToken } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -8,6 +8,10 @@ router.post('/register', register);
 
 router.post('/login', login);
 
-router.get('/renew', renew);
+router.post('/changepass', changePass);
+
+router.post('/recoverpass', recoverPass);
+
+router.get('/renew', renewToken);
 
 module.exports = router;

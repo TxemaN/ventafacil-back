@@ -91,7 +91,8 @@ const createAds = async (req, res) => {
             product: stripeProduct.id,
         });
         let Precio_Stripe = stripePrice.id;
-        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe);
+        let Producto_Stripe = stripeProduct.id;
+        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe);
         if (data) {
             //FFFFFFFF//
             res.status(200).json({
@@ -116,10 +117,10 @@ const actualizarAds = async (req, res) => {
     let data;
     try {
         const id_anuncio = req.params.id_anuncio;
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}` } = req.body;
 
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor) {
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El anuncio debe tener todos los campos',
@@ -138,7 +139,7 @@ const actualizarAds = async (req, res) => {
         }
 
         // 
-        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio);
+        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio, Ruta_foto, Precio_Stripe);
 
 
         const updatedData = await getById(id_anuncio);

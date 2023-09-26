@@ -20,9 +20,10 @@ CREATE TABLE Anuncios (
     Precio DECIMAL(10,2),
     Categoria VARCHAR(255),
     Zona_Geografica VARCHAR(255),
-    Gasto_Envio_Incluido BOOLEAN,
     ID_Vendedor INT REFERENCES Usuarios(ID),
-    Fecha_Anuncio TIMESTAMP DEFAULT NOW()
+    Fecha_Anuncio TIMESTAMP DEFAULT NOW(),
+    Precio_Stripe VARCHAR(255),
+    Producto_Stripe VARCHAR(255)
 );
 -- Tabla Transacciones
 CREATE TABLE Transacciones (

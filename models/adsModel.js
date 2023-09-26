@@ -79,13 +79,13 @@ const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica
   return result;
 };
 
-const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio) => {
+const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio, Ruta_foto, Precio_Stripe) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio]);
+    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio, Ruta_foto, Precio_Stripe]);
 
     result = data.rows[0];
 

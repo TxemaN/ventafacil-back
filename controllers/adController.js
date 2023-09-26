@@ -53,14 +53,14 @@ const getByName = async (req, res) => {
     //   
     let data;
     try {
-        const { Producto} = req.body;
+        const { Producto } = req.body;
 
         data = await getByNombre('%' + Producto + '%');
 
 
         res.status(200).json({
             ok: true,
-            data:data
+            data: data
         });
     } catch (error) {
         console.log(error)
@@ -74,7 +74,7 @@ const getByName = async (req, res) => {
 
 const createAds = async (req, res) => {
     try {
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}`} = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}` } = req.body;
         if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
             return res.status(400).json({
                 ok: false,
@@ -117,10 +117,10 @@ const actualizarAds = async (req, res) => {
     let data;
     try {
         const id_anuncio = req.params.id_anuncio;
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto=`uploads/${req.file.filename}` } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}`, Producto_Stripe } = req.body;
 
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
+        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto || !Producto_Stripe) {
             return res.status(400).json({
                 ok: false,
                 msg: 'El anuncio debe tener todos los campos',
@@ -136,10 +136,21 @@ const actualizarAds = async (req, res) => {
                 ok: true,
                 msg: 'Anuncio actualizado.',
             });
-        }
 
-        // 
-        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, id_anuncio, Ruta_foto, Precio_Stripe);
+        }
+        const product = await stripe.products.update(Producto_Stripe,
+            {
+                name: Producto,
+                description: Descripcion,
+            });
+
+            let stripePrice = await stripe.prices.create({
+                unit_amount: Precio * 100,
+                currency: 'eur',
+                product: Producto_Stripe,
+            });
+            let Precio_Stripe = stripePrice.id;
+        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, id_anuncio);
 
 
         const updatedData = await getById(id_anuncio);

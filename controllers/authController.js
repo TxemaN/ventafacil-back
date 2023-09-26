@@ -78,7 +78,7 @@ const changePass = async (req, res) => {
     try {
 
         if (user) {
-            await updatePassword(auth, newPassword);
+            await updatePassword(newPassword);
 
             //Respuesta HTTP 200 OK contraseña actualizada
             res.status(200).json({

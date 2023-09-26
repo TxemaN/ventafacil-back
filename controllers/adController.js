@@ -1,6 +1,7 @@
 const { getAllAds, postAds, updateAds, getById, getByNombre, borrarAd } = require('../models/adsModel');
 const stripe = require('stripe')(process.env.STRIPE_KEY);
-
+const urlLocation = "http://api.positionstack.com/v1/forward";
+const claveLocation= process.env.LOCATION_KEY
 
 
 const getAds = async (req, res) => {
@@ -81,6 +82,11 @@ const createAds = async (req, res) => {
                 msg: "rellene todos los campos"
             });
         }
+        const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${Zona_Geografica}, Spain`)
+            
+                
+               
+                
         let stripeProduct = await stripe.products.create({
             name: Producto,
             description: Descripcion,
@@ -90,15 +96,21 @@ const createAds = async (req, res) => {
             currency: 'eur',
             product: stripeProduct.id,
         });
+        let datos = await locate.json()
         let Precio_Stripe = stripePrice.id;
         let Producto_Stripe = stripeProduct.id;
-        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe);
-        if (data) {
+        let Producto_Latitude =datos.data[0].latitude
+        let Producto_Longitude =datos.data[0].longitude
+        
+        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude );
+        if (data&&locate.ok) {
             //FFFFFFFF//
+            
             res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',
-                data
+                data,
+                datos: datos.data[0]
             });
         } else {
             throw new Error('Error al crear el anuncio');

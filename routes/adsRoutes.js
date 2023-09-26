@@ -26,7 +26,7 @@ router.post('/anunciar', upload.single('imagen_anuncio'),  createAds)
 
 //updateAds
 
-router.put('/actualizar/:id_anuncio', actualizarAds)
+router.put('/actualizar/:id_anuncio', upload.single('imagen_anuncio'), actualizarAds)
 
 //deleteAds
 

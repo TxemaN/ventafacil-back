@@ -1,11 +1,11 @@
 -- Tabla Usuarios
 CREATE TABLE Usuarios (
     iD SERIAL PRIMARY KEY,
-    Nombre VARCHAR(255),
-    Apellidos VARCHAR(255),
-    Username VARCHAR(255) UNIQUE,
+    Nombre VARCHAR(50),
+    Apellidos VARCHAR(100),
+    Username VARCHAR(50) UNIQUE,
     Email VARCHAR(255) UNIQUE,
-    Rol VARCHAR(50) DEFAULT 'user',
+    Rol VARCHAR(10) DEFAULT 'user',
     Contacto VARCHAR(50),
     Provincia VARCHAR(255),
     Ciudad VARCHAR(255),
@@ -15,17 +15,19 @@ CREATE TABLE Usuarios (
 -- Tabla Anuncios
 CREATE TABLE Anuncios (
     ID_Anuncio SERIAL PRIMARY KEY,
-    Producto VARCHAR(255),
+    Producto VARCHAR(100),
     Descripcion TEXT,
     Precio DECIMAL(10,2),
-    Categoria VARCHAR(255),
+    Categoria VARCHAR(50),
     Zona_Geografica VARCHAR(255),
     ID_Vendedor INT REFERENCES Usuarios(ID),
     Fecha_Anuncio TIMESTAMP DEFAULT NOW(),
+
     Precio_Stripe VARCHAR(255),
     Producto_Stripe VARCHAR(255),
     Producto_Latitude VARCHAR(255),
    Producto_Longitude VARCHAR(255)
+
 );
 -- Tabla Transacciones
 CREATE TABLE Transacciones (

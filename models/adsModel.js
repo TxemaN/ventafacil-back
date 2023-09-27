@@ -48,7 +48,7 @@ const getByNombre = async (Producto) => {
       throw new Error('No se encontró la entrada con el NOMBRE proporcionado');
     }
 
-    result = await data.rows[0];
+    result = await data.rows;
   } catch (error) {
     console.error(error);
     throw new Error('Error al buscar la entrada por NOMBRE');
@@ -59,14 +59,55 @@ const getByNombre = async (Producto) => {
 };
 
 
+const getByNombreUsuario = async (Nombre_Vendedor) => {
+  let client, result;
+  try {
+    client = await pool.connect();
 
-const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude) => {
+    const data = await client.query(querieAds.byUserName, [Nombre_Vendedor]);
+
+    if (data.rows.length === 0) {
+      throw new Error('No se encontró la entrada con el NOMBRE proporcionado');
+    }
+
+    result = await data.rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error al buscar la entrada por NOMBRE');
+  } finally {
+    client.release();
+  }
+  return result
+};
+
+const getByCategoria = async (Categoria) => {
+  let client, result;
+  try {
+    client = await pool.connect();
+
+    const data = await client.query(querieAds.byCategoria, [Categoria]);
+
+    if (data.rows.length === 0) {
+      throw new Error('No se encontró la entrada con la CATEGORÍA SELECCIONADA');
+    }
+
+    result = await data.rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error al buscar la entrada por CTEGORÍA');
+  } finally {
+    client.release();
+  }
+  return result
+};
+
+const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude]);
+    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor]);
 
     result = data.rows[0];
 
@@ -118,6 +159,8 @@ module.exports = {
   getAllAds,
   getById,
   getByNombre,
+  getByNombreUsuario,
+  getByCategoria,
   postAds,
   updateAds,
   borrarAd

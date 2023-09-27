@@ -1,5 +1,5 @@
 
-const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById, updatePassword } = require('../models/userModel');
+const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById } = require('../models/userModel');
 const bcrypt = require('bcrypt');
 
 /**

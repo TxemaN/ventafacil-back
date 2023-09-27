@@ -5,6 +5,25 @@
  */
 const { check, validationResult } = require('express-validator');
 
+//MIDDLEWARE CREACIÓN ANUNCIOS
+const checkCreateAd =[
+    check('Producto', 'Nombre del producto obligatorio').not().isEmpty(),
+    check('Descripcion', 'La descripción no puede estar en blanco').not().isEmpty(),
+    check('Precio', 'Los usuarios deben conocer el precio').not().isEmpty(),
+    check('Categoria', 'Debes elegir una categoría de la lista').not().isEmpty(),
+    check('Zona_Geografica', 'Debes elegir una zona de la lista').not().isEmpty(),
+    check('ID_Vendedor', 'Necesita un ID de vendedor para publicar el anuncio').not().isEmpty(),
+    check('Nombre_Vendedor', 'Necesita un nombre de vendedor para publicar el anuncio').not().isEmpty(),
+    
+]
+
+
+
+
+
+
+
+
 
 /**
  * Middleware para validar los datos de creación de usuario.
@@ -35,14 +54,6 @@ const checkCreateUser = [
     // Validación para 'ciudad'
     check('ciudad', 'Ciudad obligatoria').not().isEmpty(),
 
-    // Validación para 'password'
-    check('pin')
-        .notEmpty().withMessage('Contraseña obligatoria')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-        .matches(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/).withMessage('La contraseña debe contener al menos 1 mayúscula y 1 número'),
-
-    // Validación para 'confirmPassword'
-    check('confirmPin', 'Confirmación de contraseña obligatoria').not().isEmpty(),
 ];
 
 
@@ -77,22 +88,6 @@ const checkUpdate = [
 ];
 
 /**
- * Validaciones para la contraseña de un usuario.
- *
- * @type {Array}
- */
-const checkPassword = [
-    // Validación para 'password'
-    check('newPin')
-        .notEmpty().withMessage('Contraseña obligatoria')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-        .matches(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/).withMessage('La contraseña debe contener al menos 1 mayúscula y 1 número'),
-
-    // Validación para 'confirmPassword'
-    check('confirmPin', 'Confirmación de contraseña obligatoria').not().isEmpty()
-];
-
-/**
  * Middleware para manejar los errores de validación.
  *
  * @param {Object} req - La solicitud HTTP.
@@ -109,8 +104,8 @@ const checkResult = (req, res, next) => {
 
 
 module.exports = {
+    checkCreateAd,
     checkCreateUser,
     checkUpdate,
-    checkPassword,
     checkResult
 };

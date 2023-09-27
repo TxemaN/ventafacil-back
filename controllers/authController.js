@@ -1,4 +1,4 @@
-require('../config/firebaseConfig')
+require('../config/firebaseConfig');
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken } = require("firebase/auth");
 
 /**
@@ -15,10 +15,15 @@ const register = async (req, res) => {
 
     try {
         const userCreado = await createUserWithEmailAndPassword(auth, email, password);
+       // Datos necesarios para formulario SQL
+        const datosPerfil = {
+            fireUid: userCreado._tokenResponse.localId,
+            fireEmail: userCreado._tokenResponse.email
+        };
         //Respuesta HTTP 201 Created cuenta creada
         res.status(201).json({
             ok: true,
-            userCreado: userCreado.user,
+            datosPerfil,
             message: `Usuario ${email} creado satisfactoriamente`
         });
 
@@ -90,14 +95,14 @@ const login = async (req, res) => {
  * @throws {Error} Si se produce un error durante el cambio de contraseña.
  */
 const changePass = async (req, res) => {
-    const newPassword = req.body.newPassword;
+    const { newPassword } = req.body;
     const auth = getAuth();
     const user = auth.currentUser
 
     try {
 
         if (user) {
-            await updatePassword(newPassword);
+            await updatePassword(user, newPassword);
 
             //Respuesta HTTP 200 OK contraseña actualizada
             res.status(200).json({

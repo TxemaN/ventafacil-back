@@ -1,5 +1,5 @@
 
-const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById, updatePassword } = require('../models/userModel');
+const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById } = require('../models/userModel');
 const bcrypt = require('bcrypt');
 
 /**
@@ -193,52 +193,7 @@ const userDeleteControl = async (req, res) => {
 };
 
 
-/**
- * Controlador para cambiar la contraseña de un usuario por su ID.
- *
- * @param {Object} req - La solicitud HTTP.
- * @param {Object} res - La respuesta HTTP.
- * @returns {Promise} Una promesa que resuelve en un objeto JSON con un mensaje de éxito.
- * @throws {Error} Si se produce un error durante el cambio de contraseña o si la contraseña actual es incorrecta.
- */
-const userPasswordControl = async (req, res) => {
-    const userId = req.params.id;
-    const { currentPin, newPin, confirmPin } = req.body;
 
-    try {
-        // Obtiene el usuario desde la BBDD según su ID
-        const user = await getUserById(userId);
-
-        // Verifica que el usuario existe
-        if (!user) {
-            return res.status(404).send('Usuario no encontrado');
-        }
-
-        // Verifique si la contraseña introducida es correcta
-        const pinMatch = await bcrypt.compare(currentPin, user.pin);
-
-        if (!pinMatch) {
-            return res.status(400).json({ error: 'Contraseña introducida incorrecta.' });
-        }
-
-        // Verifica que la nueva contraseña y la confirmación coincidan
-        if (newPin !== confirmPin) {
-            return res.status(400).json({ error: 'La nueva contraseña y su confirmacion deben coincidir.' });
-        }
-
-        // Hash de la nueva contraseña
-        const hashedPin = bcrypt.hashSync(newPin, 10);
-
-        // Atualiza la contraseña en la BBDD
-        const updatedUser = await updatePassword(userId, hashedPin);
-
-        // Incluye un mensaje de exito en la respuesta
-        res.status(200).json({ ok: true, msg: 'Contraseña modificada con éxito.' });
-    } catch (error) {
-        console.error('Error: ', error);
-        res.status(500).send('Contacte con el administrador.');
-    }
-};
 
 
 /**
@@ -271,6 +226,6 @@ module.exports = {
     userByIdControl,
     userUpdateControl,
     userDeleteControl,
-    userPasswordControl
+    
 };
 

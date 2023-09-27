@@ -106,18 +106,7 @@ const queriesUser = {
     deletarUser: `
         DELETE FROM usuarios WHERE ID = $1;
     `
-    ,
-
-    /**
-     * Query para atualizar a senha de um user.
-     * @type {string}
-     */
-    mudarSenha: `
-        UPDATE usuarios 
-        SET pin = $2
-        WHERE id = $1
-        RETURNING *;
-    `
+ 
 };
 
 module.exports = { queriesUser };

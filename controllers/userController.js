@@ -1,5 +1,6 @@
 
 const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById } = require('../models/userModel');
+
 const bcrypt = require('bcrypt');
 
 /**

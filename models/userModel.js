@@ -1,6 +1,6 @@
 
 
-const { pool } = require('../utils/connectPool');  // Assumindo que você tem um módulo para conectar ao banco de dados.
+const { pool } = require('../utils/connectPool');  
 const { queriesUser } = require('./queries2');
 
 /**
@@ -20,12 +20,12 @@ const { queriesUser } = require('./queries2');
  * @throws {Error} Se ocorrer um erro durante a criação do usuário.
  */
 const createUser = async (user) => {
-    const { nombre, apellidos, username, email, rol, contacto, provincia, ciudad,  pin } = user;
+    const {  uid_Firebase,nombre, apellidos, username, email, rol, contacto, provincia, ciudad } = user;
     try {
         const client = await pool.connect();
         const result = await client.query(
             queriesUser.criarUser,
-            [nombre, apellidos, username, email,rol ,contacto,provincia,  ciudad,pin   ]
+            [ uid_Firebase,nombre, apellidos, username, email,rol ,contacto,provincia,  ciudad,pin   ]
         );
         client.release();
         return result.rows[0];  
@@ -72,8 +72,6 @@ const getUserByEmail = async (email) => {
         throw error;
     }
 };
-
-
 
 
 /**
@@ -151,32 +149,6 @@ const updateUser = async (id, updatedData) => {
 };
 
 
-/**
- * Actualiza la contraseña de un usuario por su ID.
- *
- * @param {number} id - El ID del usuario cuya contraseña se desea actualizar.
- * @param {string} hashedPin - La nueva contraseña hasheada del usuario.
- * @returns {Promise<Object>} El usuario con la contraseña actualizada.
- * @throws {Error} Si ocurre un error al actualizar la contraseña del usuario.
- */
-const updatePassword = async (id, hashedPin) => {
-    try {
-        const client = await pool.connect();
-        const result = await client.query(
-            queriesUser.mudarSenha,  // Asegúrate de tener la consulta correcta importada
-            [id, hashedPin]  // hashedPassword es el nombre correcto ahora
-        );
-        client.release();
-        return result.rows[0];  // Devuelve el usuario actualizado o indefinido
-    } catch (error) {
-        console.error('Error en updatePassword: ', error);
-        throw error;
-    }
-};
-
-
-
-
 
 /**
  * Elimina un usuario por su ID.
@@ -206,7 +178,6 @@ module.exports = {
     getByUsername,
     getUserById,
     updateUser,
-    updatePassword,
     deleteUser,
   
 };

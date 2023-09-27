@@ -1,5 +1,6 @@
 -- Tabla Usuarios
 CREATE TABLE Usuarios (
+    Uid_Firebase VARCHAR(255) UNIQUE,
     iD SERIAL PRIMARY KEY,
     Nombre VARCHAR(50),
     Apellidos VARCHAR(100),
@@ -9,7 +10,6 @@ CREATE TABLE Usuarios (
     Contacto VARCHAR(50),
     Provincia VARCHAR(255),
     Ciudad VARCHAR(255),
-    pin VARCHAR(255), 
     Fecha TIMESTAMP DEFAULT NOW()
 );
 -- Tabla Anuncios
@@ -22,7 +22,6 @@ CREATE TABLE Anuncios (
     Zona_Geografica VARCHAR(255),
     ID_Vendedor INT REFERENCES Usuarios(ID),
     Fecha_Anuncio TIMESTAMP DEFAULT NOW(),
-
     Precio_Stripe VARCHAR(255),
     Producto_Stripe VARCHAR(255),
     Producto_Latitude VARCHAR(255),

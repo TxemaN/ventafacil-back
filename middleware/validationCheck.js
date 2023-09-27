@@ -35,14 +35,6 @@ const checkCreateUser = [
     // Validación para 'ciudad'
     check('ciudad', 'Ciudad obligatoria').not().isEmpty(),
 
-    // Validación para 'password'
-    check('pin')
-        .notEmpty().withMessage('Contraseña obligatoria')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-        .matches(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/).withMessage('La contraseña debe contener al menos 1 mayúscula y 1 número'),
-
-    // Validación para 'confirmPassword'
-    check('confirmPin', 'Confirmación de contraseña obligatoria').not().isEmpty(),
 ];
 
 
@@ -74,22 +66,6 @@ const checkUpdate = [
 
     // Validación para 'ciudad'
     check('ciudad', 'Ciudad obligatoria').not().isEmpty(),
-];
-
-/**
- * Validaciones para la contraseña de un usuario.
- *
- * @type {Array}
- */
-const checkPassword = [
-    // Validación para 'password'
-    check('newPin')
-        .notEmpty().withMessage('Contraseña obligatoria')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres')
-        .matches(/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$/).withMessage('La contraseña debe contener al menos 1 mayúscula y 1 número'),
-
-    // Validación para 'confirmPassword'
-    check('confirmPin', 'Confirmación de contraseña obligatoria').not().isEmpty()
 ];
 
 /**

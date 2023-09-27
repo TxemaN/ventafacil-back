@@ -1,12 +1,19 @@
 require('../config/firebaseConfig')
 const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken } = require("firebase/auth");
 
+/**
+ * Controlador para crear una cuenta de usuario con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON con los detalles del usuario creado y el mensaje de resultado.
+ * @throws {Error} Si se produce un error durante la creación del usuario.
+ */
 const register = async (req, res) => {
     const { email, password } = req.body;
     const auth = getAuth();
 
     try {
-        //console.log(auth)
         const userCreado = await createUserWithEmailAndPassword(auth, email, password);
         //Respuesta HTTP 201 Created cuenta creada
         res.status(201).json({
@@ -14,7 +21,7 @@ const register = async (req, res) => {
             userCreado: userCreado.user,
             message: `Usuario ${email} creado satisfactoriamente`
         });
-        //res.send('usuario creado!')
+
     } catch (error) {
         //Respuesta HTTP 400 Bad Request Correo ya en uso
         if (error.code === 'auth/email-already-in-use') {
@@ -30,12 +37,18 @@ const register = async (req, res) => {
                 ok: false,
                 message: 'Error interno del servidor'
             });
-            // const errorMsg = error.message
-            // res.send(errorMsg)
         };
     };
 };
 
+/**
+ * Controlador para inciar sesion con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON con los detalles de inicio de sesion y mensaje de resultado.
+ * @throws {Error} Si se produce un error durante el inicio de sesión.
+ */
 const login = async (req, res) => {
     const { email, password } = req.body;
     const auth = getAuth();
@@ -48,7 +61,7 @@ const login = async (req, res) => {
             userIniciado: userIniciado.user,
             message: 'Sesión iniciada'
         });
-        // res.send('sesion iniciada!')
+
     } catch (error) {
         //Respuesta HTTP 401 Unauthorized si las credenciales son incorrectas
         if (error.code === 'auth/invalid-login-credentials') {
@@ -64,12 +77,18 @@ const login = async (req, res) => {
                 ok: false,
                 message: 'Error interno del servidor'
             });
-            // const errorMsg = error.message
-            // res.send(errorMsg)
         };
     };
 };
 
+/**
+ * Controlador para cambiar la contraseña de la cuenta con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON con la respuesta y el mensaje de resultado.
+ * @throws {Error} Si se produce un error durante el cambio de contraseña.
+ */
 const changePass = async (req, res) => {
     const newPassword = req.body.newPassword;
     const auth = getAuth();
@@ -103,6 +122,15 @@ const changePass = async (req, res) => {
     };
 };
 
+
+/**
+ * Controlador para recuperar la contraseña olvidada con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON con la respuesta y el mensaje de resultado.
+ * @throws {Error} Si se produce un error durante la solicitud.
+ */
 const recoverPass = async (req, res) => {
     const { email } = req.body;
     const auth = getAuth();
@@ -125,11 +153,18 @@ const recoverPass = async (req, res) => {
     };
 };
 
+/**
+ * Controlador para renovar token de sesion iniciada con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON con el mensaje de resultado y el token renovado.
+ * @throws {Error} Si se produce un error durante la renovación.
+ */
 const renewToken = async (req, res) => {
     const auth = getAuth();
     const user = auth.currentUser
 
-    // console.log(user)
     if (user) {
         try {
 
@@ -161,7 +196,7 @@ const renewToken = async (req, res) => {
         };
 
     } else {
-        // Usuario no autenticado
+        //Respuesta HTTP 401 Unauthorized si las credenciales son incorrectas
         res.status(401).json({
             ok: false,
             message: 'Usuario no autenticado'

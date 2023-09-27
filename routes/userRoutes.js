@@ -6,11 +6,9 @@ const {
     userDeleteControl,
     userUpdateControl,
     userCreateControl,
-    userPasswordControl
 } = require('../controllers/userController');
 const {
     checkCreateUser,
-    checkPassword,
     checkUpdate,
     checkResult
 } = require('../middleware/validationCheck');
@@ -73,18 +71,7 @@ router.get('/:id', userByIdControl);
  */
 router.put('/:id', [checkUpdate, checkResult], userUpdateControl);
 
-/**
- * Ruta para actualizar la contraseña de un usuario por su ID.
- *
- * @route PUT /api/users/password/{id}
- * @group Usuarios - Operaciones relacionadas con usuarios.
- * @param {number}  - El ID del usuario cuya contraseña se actualizará.
- * @returns 200 - Usuario con contraseña actualizada.
- * @throws {Error} 400 - Error de validación.
- * @throws {Error} 404 - Usuario no encontrado.
- * @throws {Error} 500 - Error interno del servidor.
- */
-router.put('/password/:id', [checkPassword, checkResult], userPasswordControl);
+
 
 /**
  * Ruta para eliminar un usuario por su ID.

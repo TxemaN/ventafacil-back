@@ -107,6 +107,5 @@ module.exports = {
     checkCreateAd,
     checkCreateUser,
     checkUpdate,
-    checkPassword,
     checkResult
 };

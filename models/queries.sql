@@ -26,7 +26,8 @@ CREATE TABLE Anuncios (
     Precio_Stripe VARCHAR(255),
     Producto_Stripe VARCHAR(255),
     Producto_Latitude VARCHAR(255),
-   Producto_Longitude VARCHAR(255)
+   Producto_Longitude VARCHAR(255),
+   Nombre_Vendedor VARCHAR(255)
 
 );
 -- Tabla Transacciones

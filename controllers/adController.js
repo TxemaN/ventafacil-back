@@ -1,9 +1,10 @@
-const { getAllAds, postAds, updateAds, getById, getByNombre, borrarAd } = require('../models/adsModel');
+
+const { getAllAds, postAds, updateAds, getById, getByNombre, getByNombreUsuario, getByCategoria, borrarAd } = require('../models/adsModel');
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 const urlLocation = "http://api.positionstack.com/v1/forward";
 const claveLocation= process.env.LOCATION_KEY
 
-
+/** Controlador para acceder a todos los anuncios.*/
 const getAds = async (req, res) => {
     //   
     let data;
@@ -12,8 +13,8 @@ const getAds = async (req, res) => {
 
         data = await getAllAds();
 
-
-        res.status(200).json({
+//RETURN Y GESTIONAR 404
+     return res.status(200).json({
             ok: true,
             data
         });
@@ -27,6 +28,7 @@ const getAds = async (req, res) => {
     }
 };
 
+/** Controlador para acceder a un anuncio según su ID.*/
 const getOneById = async (req, res) => {
     //   
     let data;
@@ -35,8 +37,8 @@ const getOneById = async (req, res) => {
 
         data = await getById(id_anuncio);
 
-
-        res.status(200).json({
+//RETURN Y GESTIONAR 404
+      return res.status(200).json({
             ok: true,
             data
         });
@@ -50,6 +52,7 @@ const getOneById = async (req, res) => {
     }
 };
 
+/** Controlador para hacer búsqeuda por nombre.*/
 const getByName = async (req, res) => {
     //   
     let data;
@@ -58,8 +61,8 @@ const getByName = async (req, res) => {
 
         data = await getByNombre('%' + Producto + '%');
 
-
-        res.status(200).json({
+//RETURN ADEMÁS DE STATUS
+      return  res.status(200).json({
             ok: true,
             data: data
         });
@@ -73,15 +76,58 @@ const getByName = async (req, res) => {
     }
 };
 
+/** Controlador para hacer búsqeuda por nombre.*/
+const getByUserName = async (req, res) => {
+    //   
+    let data;
+    try {
+        const { Nombre_Vendedor } = req.body;
+
+        data = await getByNombreUsuario(Nombre_Vendedor);
+
+//RETURN ADEMÁS DE STATUS
+      return  res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por nombre de usuario'
+        });
+
+    }
+};
+
+const getByCategory = async (req, res) => {
+    //   
+    let data;
+    try {
+        const { Categoria } = req.body;
+
+        data = await getByCategoria(Categoria);
+
+//RETURN ADEMÁS DE STATUS
+      return  res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por categoria'
+        });
+
+    }
+};
+
+/** Controlador para crear anuncios*/
 const createAds = async (req, res) => {
     try {
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}` } = req.body;
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto) {
-            return res.status(400).json({
-                ok: false,
-                msg: "rellene todos los campos"
-            });
-        }
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}`, Nombre_Vendedor } = req.body;
+       
         const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${Zona_Geografica}, Spain`)
             
                 
@@ -102,11 +148,11 @@ const createAds = async (req, res) => {
         let Producto_Latitude =datos.data[0].latitude
         let Producto_Longitude =datos.data[0].longitude
         
-        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude );
+        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor,  Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor );
         if (data&&locate.ok) {
-            //FFFFFFFF//
+           //RETURN Y 404
             
-            res.status(200).json({
+          return  res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',
                 data,
@@ -124,20 +170,15 @@ const createAds = async (req, res) => {
     }
 };
 
-
+/** Controlador para acceder a un anuncio según su ID y actualizarlo.*/
 const actualizarAds = async (req, res) => {
     let data;
     try {
         const id_anuncio = req.params.id_anuncio;
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}`, Producto_Stripe } = req.body;
+        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Nombre_vendedor, Ruta_foto = `uploads/${req.file.filename}`, Producto_Stripe } = req.body;
 
 
-        if (!Producto || !Descripcion || !Precio || !Categoria || !Zona_Geografica || !ID_Vendedor || !Ruta_foto || !Producto_Stripe) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'El anuncio debe tener todos los campos',
-            });
-        }
+       
 
 
         const originalData = await getById(id_anuncio);
@@ -162,12 +203,12 @@ const actualizarAds = async (req, res) => {
                 product: Producto_Stripe,
             });
             let Precio_Stripe = stripePrice.id;
-        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, id_anuncio);
+        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Nombre_vendedor, Ruta_foto, Precio_Stripe, id_anuncio);
 
 
         const updatedData = await getById(id_anuncio);
 
-        res.status(200).json({
+      return  res.status(200).json({
             ok: true,
             msg: 'Anuncio actualizado ',
             data: updatedData,
@@ -181,18 +222,12 @@ const actualizarAds = async (req, res) => {
     }
 };
 
-
+/** Controlador para acceder a un anuncio según su ID y eliminarlo.*/
 const deleteAds = async (req, res) => {
     try {
         let data;
         const id_anuncio = req.params.id_anuncio;
-        if (isNaN(id_anuncio)) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Id invalido.',
-            });
-        }
-
+       
         data = await borrarAd(id_anuncio);
 
         if (data) {
@@ -222,5 +257,7 @@ module.exports = {
     createAds,
     actualizarAds,
     deleteAds,
-    getByName
+    getByName,
+    getByUserName,
+    getByCategory
 }

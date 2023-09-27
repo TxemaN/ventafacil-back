@@ -5,6 +5,25 @@
  */
 const { check, validationResult } = require('express-validator');
 
+//MIDDLEWARE CREACIÓN ANUNCIOS
+const checkCreateAd =[
+    check('Producto', 'Nombre del producto obligatorio').not().isEmpty(),
+    check('Descripcion', 'La descripción no puede estar en blanco').not().isEmpty(),
+    check('Precio', 'Los usuarios deben conocer el precio').not().isEmpty(),
+    check('Categoria', 'Debes elegir una categoría de la lista').not().isEmpty(),
+    check('Zona_Geografica', 'Debes elegir una zona de la lista').not().isEmpty(),
+    check('ID_Vendedor', 'Necesita un ID de vendedor para publicar el anuncio').not().isEmpty(),
+    check('Nombre_Vendedor', 'Necesita un nombre de vendedor para publicar el anuncio').not().isEmpty(),
+    
+]
+
+
+
+
+
+
+
+
 
 /**
  * Middleware para validar los datos de creación de usuario.
@@ -109,6 +128,7 @@ const checkResult = (req, res, next) => {
 
 
 module.exports = {
+    checkCreateAd,
     checkCreateUser,
     checkUpdate,
     checkPassword,

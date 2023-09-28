@@ -12,17 +12,9 @@ const bcrypt = require('bcrypt');
  * @throws {Error} Si se produce un error durante la creación del usuario.
  */
 const userCreateControl = async (req, res) => {
+    try {
     const {
-        nombre,
-        apellidos,
-        username,
-        email,
-        rol = "user",
-        contacto,
-        provincia,
-        ciudad,
-        pin,
-        confirmPin,
+        uid_Firebase,nombre, apellidos, username, email,rol, contacto, provincia, ciudad
     } = req.body;
 
     console.log('Datos recibidos de la solicitud:', req.body);
@@ -31,34 +23,23 @@ const userCreateControl = async (req, res) => {
     console.log('Usuario ya existe:', verificar.msg);
 
     if (verificar.ok) {
-        return res.status(400).json({ error: verificar.msg });
+        return res.status(400).json({ 
+            ok: false ,
+            error: verificar.msg });
     }
 
-    if (pin !== confirmPin) {
-        console.log('Las contraseñas no coinciden');
-        return res.status(400).json({ error: 'Las contraseñas no coinciden' });
-    }
+  
 
-    try {
-        const hashedPin = await bcrypt.hash(pin, 10); // Usa bcrypt.hash para crear el hash de la contraseña
-        let user = {
-            nombre,
-            apellidos,
-            username,
-            email,
-            rol,
-            contacto,
-            provincia,
-            ciudad,
-            pin: hashedPin,
-        };
+   
+     
 
         const newUser = await createUser(user);
+
         console.log('Nuevo usuario creado:', newUser);
-        res.status(201).json(newUser);
+        return res.status(201).json(newUser);
     } catch (error) {
         console.error('Error durante la creación del usuario:', error);
-        res.status(500).json({ error: 'Póngase en contacto con el administrador' });
+       return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 
@@ -77,8 +58,8 @@ const userAllCOntrol = async (req, res) => {
         const users = await getAllUsers();
         res.status(200).json(users);
     } catch (error) {
-        console.error('Error: ', error.msg);
-        res.status(500).send('Contacte con el administrador.');
+         console.error('Error durante la creación del usuario:', error);
+       return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 
@@ -102,17 +83,18 @@ const userBuscarControl = async (req, res) => {
         } else if (email) {
             user = await getUserByEmail(email);
         } else {
-            return res.status(400).send('Ingrese un ID, nombre de usuario o dirección de correo electrónico.');
+            return res.status(400).json({ok:false ,
+                msg:'Ingrese un ID, nombre de usuario o dirección de correo electrónico.'});
         }
 
         if (!user) {
-            return res.status(404).send('Usuario no encontrado.');
+            return res.status(404).json('Usuario no encontrado.');
         }
 
         res.status(200).json(user);
     } catch (error) {
-        console.error('Error: ', error.msg);
-        res.status(500).send('Contacte al administrador.');
+        console.error('Error durante la creación del usuario:', error);
+        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 
@@ -131,13 +113,13 @@ const userByIdControl = async (req, res) => {
         const user = await getUserById(req.params.id);
 
         if (!user) {
-            return res.status(404).send('Usuario no encontrado.');
+            return res.status(404).json('Usuario no encontrado.');
         }
 
         res.status(200).json(user);
     } catch (error) {
-        console.error('Error: ', error.msg);
-        res.status(500).send('Error del servidor.');
+        console.error('Error durante la creación del usuario:', error);
+        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 
@@ -158,13 +140,13 @@ const userUpdateControl = async (req, res) => {
         const updatedUser = await updateUser(userId, updatedData);
 
         if (!updatedUser) {
-            return res.status(404).send('Usuario no encontrado.');
+            return res.status(404).json('Usuario no encontrado.');
         }
 
         res.status(200).json(updatedUser);
     } catch (error) {
-        console.error('Error: ', error.msg);
-        res.status(500).send('Contacte con el administrador.');
+        console.error('Error durante la creación del usuario:', error);
+        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 
@@ -183,13 +165,13 @@ const userDeleteControl = async (req, res) => {
         const deleted = await deleteUser(userId);
 
         if (!deleted) {
-            return res.status(404).send('Usuario no encontrado.');
+            return res.status(404).json('Usuario no encontrado.');
         }
 
         res.status(200).send('Usuario eliminado correctamente.');
     } catch (error) {
-        console.error('Error: ', error.msg);
-        res.status(500).send('Contacte con el administrador.');
+        console.error('Error durante la creación del usuario:', error);
+        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
     }
 };
 

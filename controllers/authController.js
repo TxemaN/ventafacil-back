@@ -1,5 +1,5 @@
 require('../config/firebaseConfig');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken, updateProfile } = require("firebase/auth");
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken, updateProfile, signOut } = require("firebase/auth");
 // Captura del objeto contenedor de toda la data manejada por Firebase para la autenticación, necesario en todas las funciones
 const auth = getAuth();
 /**
@@ -222,7 +222,7 @@ const renewToken = async (req, res) => {
  * @returns {Promise} Una promesa que resuelve en un objeto JSON la respuesta y con el mensaje de resultado.
  * @throws {Error} Si se produce un error durante el cierre de sesión.
  */
-const logout = async () => {
+const logout = async (req, res) => {
 
     try {
         await signOut(auth)

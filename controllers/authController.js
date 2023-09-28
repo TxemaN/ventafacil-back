@@ -134,7 +134,6 @@ const changePass = async (req, res) => {
     };
 };
 
-
 /**
  * Controlador para recuperar la contraseña olvidada con Firebase Auth.
  *

@@ -1,6 +1,7 @@
 require('../config/firebaseConfig');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken, updateProfile } = require("firebase/auth");
-
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken, updateProfile, signOut } = require("firebase/auth");
+// Captura del objeto contenedor de toda la data manejada por Firebase para la autenticación, necesario en todas las funciones
+const auth = getAuth();
 /**
  * Controlador para crear una cuenta de usuario con Firebase Auth.
  *
@@ -11,7 +12,6 @@ const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, upd
  */
 const register = async (req, res) => {
     const { email, password } = req.body;
-    const auth = getAuth();
 
     try {
         const userCreado = await createUserWithEmailAndPassword(auth, email, password);
@@ -59,7 +59,6 @@ const register = async (req, res) => {
  */
 const login = async (req, res) => {
     const { email, password } = req.body;
-    const auth = getAuth();
 
     try {
         const userIniciado = await signInWithEmailAndPassword(auth, email, password);
@@ -105,7 +104,6 @@ const login = async (req, res) => {
  */
 const changePass = async (req, res) => {
     const { newPassword } = req.body;
-    const auth = getAuth();
     const user = auth.currentUser
 
     try {
@@ -136,7 +134,6 @@ const changePass = async (req, res) => {
     };
 };
 
-
 /**
  * Controlador para recuperar la contraseña olvidada con Firebase Auth.
  *
@@ -147,7 +144,6 @@ const changePass = async (req, res) => {
  */
 const recoverPass = async (req, res) => {
     const { email } = req.body;
-    const auth = getAuth();
 
     try {
         await sendPasswordResetEmail(auth, email);
@@ -176,7 +172,6 @@ const recoverPass = async (req, res) => {
  * @throws {Error} Si se produce un error durante la renovación.
  */
 const renewToken = async (req, res) => {
-    const auth = getAuth();
     const user = auth.currentUser
 
     if (user) {
@@ -218,11 +213,37 @@ const renewToken = async (req, res) => {
     };
 };
 
+/**
+ * Controlador para cerrar sesión con Firebase Auth.
+ *
+ * @param {Object} req - La solicitud HTTP.
+ * @param {Object} res - La respuesta HTTP.
+ * @returns {Promise} Una promesa que resuelve en un objeto JSON la respuesta y con el mensaje de resultado.
+ * @throws {Error} Si se produce un error durante el cierre de sesión.
+ */
+const logout = async (req, res) => {
+
+    try {
+        await signOut(auth)
+        res.status(200).json({
+            ok: true,
+            message: 'Sesión cerrada, hasta pronto!'
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({
+            ok: false,
+            error: 'Error al cerrar sesión'
+        });
+    };
+};
 
 module.exports = {
     register,
     login,
     changePass,
     recoverPass,
-    renewToken
+    renewToken,
+    logout
 };

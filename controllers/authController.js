@@ -1,5 +1,5 @@
 require('../config/firebaseConfig');
-const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken } = require("firebase/auth");
+const { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updatePassword, sendPasswordResetEmail, getIdToken, updateProfile } = require("firebase/auth");
 
 /**
  * Controlador para crear una cuenta de usuario con Firebase Auth.
@@ -15,10 +15,13 @@ const register = async (req, res) => {
 
     try {
         const userCreado = await createUserWithEmailAndPassword(auth, email, password);
-       // Datos necesarios para formulario SQL
+        //Almacenamiento del rol en la propiedad displayName
+        await updateProfile(userCreado.user, { displayName: 'user' })
+        //Datos necesarios para formulario SQL
         const datosPerfil = {
-            fireUid: userCreado._tokenResponse.localId,
-            fireEmail: userCreado._tokenResponse.email
+            uidFireBase: userCreado.user.uid,
+            emailFireBase: userCreado.user.email,
+            rolFireBase: userCreado.user.displayName
         };
         //Respuesta HTTP 201 Created cuenta creada
         res.status(201).json({
@@ -60,10 +63,16 @@ const login = async (req, res) => {
 
     try {
         const userIniciado = await signInWithEmailAndPassword(auth, email, password);
+        //Datos necesarios para formulario SQL
+        const datosPerfil = {
+            uidFireBase: userIniciado.user.uid,
+            emailFireBase: userIniciado.user.email,
+            rolFireBase: userIniciado.user.displayName
+        };
         //Respuesta HTTP 200 OK inciado
         res.status(200).json({
             ok: true,
-            userIniciado: userIniciado.user,
+            datosPerfil,
             message: 'Sesión iniciada'
         });
 

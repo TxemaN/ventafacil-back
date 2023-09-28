@@ -19,9 +19,9 @@ const register = async (req, res) => {
         await updateProfile(userCreado.user, { displayName: 'user' })
         //Datos necesarios para formulario SQL
         const datosPerfil = {
-            uid_firebase: userCreado.user.uid,
-            email: userCreado.user.email,
-            rol: userCreado.user.displayName
+            uidFireBase: userCreado.user.uid,
+            emailFireBase: userCreado.user.email,
+            rolFireBase: userCreado.user.displayName
         };
         //Respuesta HTTP 201 Created cuenta creada
         res.status(201).json({
@@ -65,9 +65,9 @@ const login = async (req, res) => {
         const userIniciado = await signInWithEmailAndPassword(auth, email, password);
         //Datos necesarios para formulario SQL
         const datosPerfil = {
-            uid_firebase: userIniciado.user.uid,
-            email: userIniciado.user.email,
-            rol: userIniciado.user.displayName
+            uidFireBase: userIniciado.user.uid,
+            emailFireBase: userIniciado.user.email,
+            rolFireBase: userIniciado.user.displayName
         };
         //Respuesta HTTP 200 OK inciado
         res.status(200).json({

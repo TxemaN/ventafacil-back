@@ -46,7 +46,7 @@ router.get('/', userAllCOntrol);
  * @returns  200 - Lista de usuarios que coinciden con los criterios de búsqueda.
  * @throws {Error} 500 - Error interno del servidor.
  */
-router.get('/buscar', userBuscarControl);
+router.post('/buscar', userBuscarControl);
 
 /**
  * Ruta para obtener un usuario por su ID.
@@ -60,7 +60,7 @@ router.get('/buscar', userBuscarControl);
  */
 router.get('/:id', userByIdControl);
 
-router.get('/uid/:uid', userByUidControl)
+router.post('/uid/:uid', userByUidControl)
 
 
 /**

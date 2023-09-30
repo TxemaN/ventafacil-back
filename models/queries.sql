@@ -22,11 +22,13 @@ CREATE TABLE Anuncios (
     Zona_Geografica VARCHAR(255),
     ID_Vendedor INT REFERENCES Usuarios(ID),
     Fecha_Anuncio TIMESTAMP DEFAULT NOW(),
+    Ruta_foto VARCHAR(255),
     Precio_Stripe VARCHAR(255),
     Producto_Stripe VARCHAR(255),
     Producto_Latitude VARCHAR(255),
    Producto_Longitude VARCHAR(255),
-   Nombre_Vendedor VARCHAR(255)
+   Nombre_Vendedor VARCHAR(255),
+   Enlace_Pago VARCHAR(255)
 
 );
 -- Tabla Transacciones

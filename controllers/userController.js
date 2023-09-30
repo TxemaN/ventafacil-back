@@ -82,6 +82,7 @@ const userBuscarControl = async (req, res) => {
     try {
         const { id, username, email } = req.body;
         let user;
+        
         if (id) {
             user = await getUserById(id);
         } else if (username) {

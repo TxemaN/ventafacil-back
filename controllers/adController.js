@@ -210,9 +210,6 @@ const actualizarAds = async (req, res) => {
         const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, producto_stripe } = req.body;
         const ruta_foto = `uploads/${imagen_anuncio}`
 
-
-
-
         const originalData = await getById(id_anuncio);
 
 

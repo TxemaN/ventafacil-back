@@ -126,19 +126,19 @@ const getByCategory = async (req, res) => {
 /** Controlador para crear anuncios*/
 const createAds = async (req, res) => {
     try {
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto = `uploads/${req.file.filename}`, Nombre_Vendedor } = req.body;
-       
-        const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${Zona_Geografica}, Spain`)
+        const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, nombre_vendedor } = req.body;
+        const ruta_foto=`uploads/${imagen_anuncio}` 
+        const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${zona_geografica}, Spain`)
             
                 
                
                 
         let stripeProduct = await stripe.products.create({
-            name: Producto,
-            description: Descripcion,
+            name: producto,
+            description: descripcion,
         });
         let stripePrice = await stripe.prices.create({
-            unit_amount: Precio * 100,
+            unit_amount: precio * 100,
             currency: 'eur',
             product: stripeProduct.id,
         });
@@ -148,7 +148,7 @@ const createAds = async (req, res) => {
         let Producto_Latitude =datos.data[0].latitude
         let Producto_Longitude =datos.data[0].longitude
         
-        let data = await postAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor,  Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor );
+        let data = await postAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor,  ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, nombre_vendedor );
         if (data&&locate.ok) {
            //RETURN Y 404
             
@@ -175,35 +175,35 @@ const actualizarAds = async (req, res) => {
     let data;
     try {
         const id_anuncio = req.params.id_anuncio;
-        const { Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Nombre_vendedor, Ruta_foto = `uploads/${req.file.filename}`, Producto_Stripe } = req.body;
-
-
+        const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, producto_stripe } = req.body;
+        const ruta_foto=`uploads/${imagen_anuncio}`
+         
        
 
 
         const originalData = await getById(id_anuncio);
 
 
-        if (Producto === originalData.Producto && Descripcion === originalData.Descripcion) {
+        if (producto === originalData.producto && descripcion === originalData.descripcion) {
             return res.status(200).json({
                 ok: true,
                 msg: 'Anuncio actualizado.',
             });
 
         }
-        const product = await stripe.products.update(Producto_Stripe,
+        const product = await stripe.products.update(producto_stripe,
             {
-                name: Producto,
-                description: Descripcion,
+                name: producto,
+                description: descripcion,
             });
 
             let stripePrice = await stripe.prices.create({
-                unit_amount: Precio * 100,
+                unit_amount: precio * 100,
                 currency: 'eur',
-                product: Producto_Stripe,
+                product: producto_stripe,
             });
             let Precio_Stripe = stripePrice.id;
-        data = await updateAds(Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Nombre_vendedor, Ruta_foto, Precio_Stripe, id_anuncio);
+        data = await updateAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto,  Precio_Stripe, id_anuncio);
 
 
         const updatedData = await getById(id_anuncio);

@@ -34,6 +34,7 @@ const queriesUser = {
      */
     criarUser: `
     INSERT INTO usuarios (
+        uid_Firebase,
         nombre,
         apellidos,
         username,
@@ -41,8 +42,7 @@ const queriesUser = {
         rol,
         contacto,
         provincia,
-        ciudad,
-        pin
+        ciudad
     ) 
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
     RETURNING *;
@@ -71,6 +71,11 @@ const queriesUser = {
         SELECT * FROM usuarios WHERE ID = $1;
     `,
 
+
+    buscarPorUid: `
+    SELECT * FROM usuarios WHERE uid_Firebase = $1;
+`,
+
     /**
      * Query para buscar un user por nombre de user.
      * @type {string}
@@ -86,17 +91,18 @@ const queriesUser = {
     actualizarUser: `
     UPDATE usuarios 
     SET 
-        nombre = $2, 
-        apellidos = $3, 
-        username = $4, 
-        email = $5, 
-        rol = $6, 
-        contacto = $7, 
-        provincia = $8, 
-        ciudad = $9
+    uid_Firebase = $1,  
+    nombre = $2, 
+    apellidos = $3, 
+    username = $4, 
+    email = $5, 
+    rol = $6, 
+    contacto = $7, 
+    provincia = $8, 
+    ciudad = $9
     WHERE 
-        id = $1
-    RETURNING *;
+      uid_Firebase = $10  
+     RETURNING *;
 `,
 
     /**
@@ -104,9 +110,9 @@ const queriesUser = {
      * @type {string}
      */
     deletarUser: `
-        DELETE FROM usuarios WHERE ID = $1;
+        DELETE FROM usuarios WHERE uid_Firebase = $1;
     `
- 
+
 };
 
 module.exports = { queriesUser };

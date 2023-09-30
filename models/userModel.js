@@ -20,12 +20,14 @@ const { queriesUser } = require('./queries2');
  * @throws {Error} Se ocorrer um erro durante a criação do usuário.
  */
 const createUser = async (user) => {
-    const {  uid_Firebase,nombre, apellidos, username, email, rol, contacto, provincia, ciudad } = user;
+    const {  uid_Firebase,nombre, apellidos, username, email, rol= "user", contacto, provincia, ciudad } = user;
+
+    console.log(user)
     try {
         const client = await pool.connect();
         const result = await client.query(
             queriesUser.criarUser,
-            [ uid_Firebase,nombre, apellidos, username, email,rol ,contacto,provincia,  ciudad,pin   ]
+            [ uid_Firebase,nombre, apellidos, username, email,rol ,contacto,provincia,  ciudad  ]
         );
         client.release();
         return result.rows[0];  
@@ -114,6 +116,20 @@ const getUserById = async (id) => {
 };
 
 
+const getUserByUid = async (uid) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query(queriesUser.buscarPorUid, [uid]);  // Mudar 'buscarPorId' para 'buscarPorUid'
+        client.release();
+        return result.rows[0];
+    } catch (error) {
+        console.error('Error en getUserByUid: ', error);
+        throw error;
+    }
+};
+
+
+
 /**
  * Actualiza los datos de un usuario por su ID.
  *
@@ -130,16 +146,15 @@ const getUserById = async (id) => {
  * @returns {Promise<Object>} El usuario actualizado.
  * @throws {Error} Si ocurre un error al actualizar los datos del usuario.
  */
-const updateUser = async (id, updatedData) => {
+const updateUser = async (uid_Firebase, updatedData) => {
     const { nombre, apellidos, username, email, rol, contacto, provincia, ciudad } = updatedData;
   
     try {
         const client = await pool.connect();
         const result = await client.query(
             queriesUser.actualizarUser,
-            [id, nombre, apellidos, username, email, rol, contacto, provincia, ciudad]
+            [uid_Firebase, nombre, apellidos, username, email, rol, contacto, provincia, ciudad, uid_Firebase]  
         );
-
         client.release();
         return result.rows[0];
     } catch (error) {
@@ -179,5 +194,5 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-  
+    getUserByUid
 };

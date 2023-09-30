@@ -1,5 +1,5 @@
 
-const { getAllAds, postAds, updateAds, getById, getByNombre, getByNombreUsuario, getByCategoria, borrarAd } = require('../models/adsModel');
+const { getAllAds, postAds, updateAds, getById, getByNombre, getByNombreUsuario, getByIdUsuario, getByCategoria, borrarAd } = require('../models/adsModel');
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 const urlLocation = "http://api.positionstack.com/v1/forward";
 const claveLocation= process.env.LOCATION_KEY
@@ -95,6 +95,29 @@ const getByUserName = async (req, res) => {
         res.status(500).json({
             ok: true,
             msg: 'No pilla la query por nombre de usuario'
+        });
+
+    }
+};
+
+const getByIdUser = async (req, res) => {
+    //   
+    let data;
+    try {
+        const id_vendedor = req.params.id_vendedor;
+
+        data = await getByIdUsuario(id_vendedor);
+
+//RETURN ADEMÁS DE STATUS
+      return  res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por ID de usuario'
         });
 
     }
@@ -259,5 +282,6 @@ module.exports = {
     deleteAds,
     getByName,
     getByUserName,
+    getByIdUser,
     getByCategory
 }

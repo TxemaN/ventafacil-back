@@ -57,9 +57,9 @@ const getByName = async (req, res) => {
     //   
     let data;
     try {
-        const { Producto } = req.body;
+        const { producto } = req.body;
 
-        data = await getByNombre('%' + Producto + '%');
+        data = await getByNombre('%' + producto + '%');
 
         //RETURN ADEMÁS DE STATUS
         return res.status(200).json({
@@ -152,10 +152,6 @@ const createAds = async (req, res) => {
         const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, nombre_vendedor } = req.body;
         const ruta_foto = `uploads/${imagen_anuncio}`
         const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${zona_geografica}, Spain`)
-
-
-
-
         let stripeProduct = await stripe.products.create({
             name: producto,
             description: descripcion,
@@ -179,11 +175,9 @@ const createAds = async (req, res) => {
         let Producto_Latitude = datos.data[0].latitude
         let Producto_Longitude = datos.data[0].longitude
         let Enlace_Pago = paymentLink.url
-
         let data = await postAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, nombre_vendedor, Enlace_Pago);
         if (data && locate.ok) {
             //RETURN Y 404
-
             return res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',

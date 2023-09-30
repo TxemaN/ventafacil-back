@@ -122,13 +122,13 @@ const getByCategoria = async (Categoria) => {
   return result
 };
 
-const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor) => {
+const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor, Enlace_Pago) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor]);
+    const data = await client.query(querieAds.byInsertQuery, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, Nombre_Vendedor, Enlace_Pago]);
 
     result = data.rows[0];
 
@@ -141,13 +141,13 @@ const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica
   return result;
 };
 
-const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_Foto,  Precio_Stripe, id_anuncio) => {
+const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_Foto,  Precio_Stripe, Enlace_Pago, id_anuncio) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor,Ruta_Foto, Precio_Stripe, id_anuncio]);
+    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_Foto, Precio_Stripe, Enlace_Pago, id_anuncio]);
 
     result = data.rows[0];
 

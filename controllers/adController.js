@@ -2,7 +2,7 @@
 const { getAllAds, postAds, updateAds, getById, getByNombre, getByNombreUsuario, getByIdUsuario, getByCategoria, borrarAd } = require('../models/adsModel');
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 const urlLocation = "http://api.positionstack.com/v1/forward";
-const claveLocation= process.env.LOCATION_KEY
+const claveLocation = process.env.LOCATION_KEY
 
 /** Controlador para acceder a todos los anuncios.*/
 const getAds = async (req, res) => {
@@ -13,8 +13,8 @@ const getAds = async (req, res) => {
 
         data = await getAllAds();
 
-//RETURN Y GESTIONAR 404
-     return res.status(200).json({
+        //RETURN Y GESTIONAR 404
+        return res.status(200).json({
             ok: true,
             data
         });
@@ -37,8 +37,8 @@ const getOneById = async (req, res) => {
 
         data = await getById(id_anuncio);
 
-//RETURN Y GESTIONAR 404
-      return res.status(200).json({
+        //RETURN Y GESTIONAR 404
+        return res.status(200).json({
             ok: true,
             data
         });
@@ -61,8 +61,8 @@ const getByName = async (req, res) => {
 
         data = await getByNombre('%' + Producto + '%');
 
-//RETURN ADEMÁS DE STATUS
-      return  res.status(200).json({
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
             ok: true,
             data: data
         });
@@ -85,8 +85,8 @@ const getByUserName = async (req, res) => {
 
         data = await getByNombreUsuario(Nombre_Vendedor);
 
-//RETURN ADEMÁS DE STATUS
-      return  res.status(200).json({
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
             ok: true,
             data
         });
@@ -108,8 +108,8 @@ const getByIdUser = async (req, res) => {
 
         data = await getByIdUsuario(id_vendedor);
 
-//RETURN ADEMÁS DE STATUS
-      return  res.status(200).json({
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
             ok: true,
             data
         });
@@ -131,8 +131,8 @@ const getByCategory = async (req, res) => {
 
         data = await getByCategoria(Categoria);
 
-//RETURN ADEMÁS DE STATUS
-      return  res.status(200).json({
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
             ok: true,
             data
         });
@@ -150,12 +150,12 @@ const getByCategory = async (req, res) => {
 const createAds = async (req, res) => {
     try {
         const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, nombre_vendedor } = req.body;
-        const ruta_foto=`uploads/${imagen_anuncio}` 
+        const ruta_foto = `uploads/${imagen_anuncio}`
         const locate = await fetch(`${urlLocation}?access_key=${claveLocation}&query=${zona_geografica}, Spain`)
-            
-                
-               
-                
+
+
+
+
         let stripeProduct = await stripe.products.create({
             name: producto,
             description: descripcion,
@@ -165,17 +165,26 @@ const createAds = async (req, res) => {
             currency: 'eur',
             product: stripeProduct.id,
         });
+        const paymentLink = await stripe.paymentLinks.create({
+            line_items: [
+                {
+                    price: stripePrice.id,
+                    quantity: 1,
+                },
+            ],
+        });
         let datos = await locate.json()
         let Precio_Stripe = stripePrice.id;
         let Producto_Stripe = stripeProduct.id;
-        let Producto_Latitude =datos.data[0].latitude
-        let Producto_Longitude =datos.data[0].longitude
-        
-        let data = await postAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor,  ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, nombre_vendedor );
-        if (data&&locate.ok) {
-           //RETURN Y 404
-            
-          return  res.status(200).json({
+        let Producto_Latitude = datos.data[0].latitude
+        let Producto_Longitude = datos.data[0].longitude
+        let Enlace_Pago = paymentLink.url
+
+        let data = await postAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto, Precio_Stripe, Producto_Stripe, Producto_Latitude, Producto_Longitude, nombre_vendedor, Enlace_Pago);
+        if (data && locate.ok) {
+            //RETURN Y 404
+
+            return res.status(200).json({
                 ok: true,
                 msg: 'Anuncio creado',
                 data,
@@ -199,9 +208,9 @@ const actualizarAds = async (req, res) => {
     try {
         const id_anuncio = req.params.id_anuncio;
         const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, producto_stripe } = req.body;
-        const ruta_foto=`uploads/${imagen_anuncio}`
-         
-       
+        const ruta_foto = `uploads/${imagen_anuncio}`
+
+
 
 
         const originalData = await getById(id_anuncio);
@@ -220,18 +229,29 @@ const actualizarAds = async (req, res) => {
                 description: descripcion,
             });
 
-            let stripePrice = await stripe.prices.create({
-                unit_amount: precio * 100,
-                currency: 'eur',
-                product: producto_stripe,
-            });
-            let Precio_Stripe = stripePrice.id;
-        data = await updateAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto,  Precio_Stripe, id_anuncio);
+        let stripePrice = await stripe.prices.create({
+            unit_amount: precio * 100,
+            currency: 'eur',
+            product: producto_stripe,
+        });
+        let Precio_Stripe = stripePrice.id;
+        const paymentLink = await stripe.paymentLinks.create({
+            line_items: [
+                {
+                    price: stripePrice.id,
+                    quantity: 1,
+                },
+            ],
+            
+        });
+        
+        let Enlace_Pago = paymentLink.url
+        data = await updateAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto, Precio_Stripe, Enlace_Pago, id_anuncio);
 
 
         const updatedData = await getById(id_anuncio);
 
-      return  res.status(200).json({
+        return res.status(200).json({
             ok: true,
             msg: 'Anuncio actualizado ',
             data: updatedData,
@@ -250,7 +270,7 @@ const deleteAds = async (req, res) => {
     try {
         let data;
         const id_anuncio = req.params.id_anuncio;
-       
+
         data = await borrarAd(id_anuncio);
 
         if (data) {

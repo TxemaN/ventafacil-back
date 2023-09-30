@@ -80,6 +80,27 @@ const getByNombreUsuario = async (Nombre_Vendedor) => {
   return result
 };
 
+const getByIdUsuario = async (id_vendedor) => {
+  let client, result;
+  try {
+    client = await pool.connect();
+
+    const data = await client.query(querieAds.byUserID, [id_vendedor]);
+
+    if (data.rows.length === 0) {
+      throw new Error('No se encontró la entrada con el NOMBRE proporcionado');
+    }
+
+    result = await data.rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error al buscar la entrada por ID');
+  } finally {
+    client.release();
+  }
+  return result
+};
+
 const getByCategoria = async (Categoria) => {
   let client, result;
   try {
@@ -160,6 +181,7 @@ module.exports = {
   getById,
   getByNombre,
   getByNombreUsuario,
+  getByIdUsuario,
   getByCategoria,
   postAds,
   updateAds,

@@ -1,5 +1,5 @@
 
-const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById } = require('../models/userModel');
+const { createUser, deleteUser, getAllUsers, getByUsername, getUserByEmail, updateUser, getUserById,getUserByUid } = require('../models/userModel');
 
 const bcrypt = require('bcrypt');
 
@@ -14,7 +14,7 @@ const bcrypt = require('bcrypt');
 const userCreateControl = async (req, res) => {
     try {
     const {
-        uid_Firebase,nombre, apellidos, username, email,rol, contacto, provincia, ciudad
+        uid_Firebase,nombre, apellidos, username, email, rol, contacto, provincia, ciudad
     } = req.body;
 
     console.log('Datos recibidos de la solicitud:', req.body);
@@ -25,18 +25,24 @@ const userCreateControl = async (req, res) => {
     if (verificar.ok) {
         return res.status(400).json({ 
             ok: false ,
-            error: verificar.msg });
+            msg: verificar.msg });
     }
 
-  
 
-   
-     
-
-        const newUser = await createUser(user);
+    const newUser = await createUser({
+        uid_Firebase,
+        nombre,
+        apellidos,
+        username,
+        email,
+        rol,
+        contacto,
+        provincia,
+        ciudad
+    });
 
         console.log('Nuevo usuario creado:', newUser);
-        return res.status(201).json(newUser);
+        return res.status(201).json({ok:true,newUser});
     } catch (error) {
         console.error('Error durante la creación del usuario:', error);
        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
@@ -56,7 +62,7 @@ const userCreateControl = async (req, res) => {
 const userAllCOntrol = async (req, res) => {
     try {
         const users = await getAllUsers();
-        res.status(200).json(users);
+        res.status(200).json({ok:true,users});
     } catch (error) {
          console.error('Error durante la creación del usuario:', error);
        return  res.status(500).json({ok:false ,msg: 'Póngase en contacto con el administrador' });
@@ -98,6 +104,22 @@ const userBuscarControl = async (req, res) => {
     }
 };
 
+const userByUidControl = async (req, res) => {
+    try {
+        const user = await getUserByUid(req.params.uid);  // Mudar 'id' para 'uid'
+
+        if (!user) {
+            return res.status(404).json('Usuario no encontrado.');
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error durante la búsqueda del usuario:', error);
+        return res.status(500).json({ok:false, msg: 'Póngase en contacto con el administrador'});
+    }
+};
+
+
 
 
 /**
@@ -134,9 +156,10 @@ const userByIdControl = async (req, res) => {
  */
 const userUpdateControl = async (req, res) => {
     try {
-        const userId = req.params.id;
-        const updatedData = req.body;
+        const userId = req.params.uid; 
 
+        const updatedData = req.body;
+        console.log('Dados recebidos:', updatedData);
         const updatedUser = await updateUser(userId, updatedData);
 
         if (!updatedUser) {
@@ -189,9 +212,9 @@ const userDeleteControl = async (req, res) => {
 const checkUserExists = async (username, email) => {
     try {
         const userByUsername = await getByUsername(username);
-        if (userByUsername) return { ok: true, msg: 'Nombre de usuario ya está en uso' };
+        if (userByUsername) return { ok: false, msg: 'Nombre de usuario ya está en uso' };
         const userByEmail = await getUserByEmail(email);
-        if (userByEmail) return { ok: true, msg: 'Correo electrónico ya está en uso' };
+        if (userByEmail) return { ok: false, msg: 'Correo electrónico ya está en uso' };
         return { ok: false, msg: '' };
     } catch (error) {
         console.error('Error: ', error.msg);
@@ -209,6 +232,7 @@ module.exports = {
     userByIdControl,
     userUpdateControl,
     userDeleteControl,
+    userByUidControl
     
 };
 

@@ -6,12 +6,14 @@ const {
     userDeleteControl,
     userUpdateControl,
     userCreateControl,
+    userByUidControl,
 } = require('../controllers/userController');
 const {
     checkCreateUser,
     checkUpdate,
     checkResult
 } = require('../middleware/validationCheck');
+
 
 const router = express.Router();
 
@@ -58,6 +60,9 @@ router.get('/buscar', userBuscarControl);
  */
 router.get('/:id', userByIdControl);
 
+router.get('/uid/:uid', userByUidControl)
+
+
 /**
  * Ruta para actualizar un usuario por su ID.
  *
@@ -69,7 +74,7 @@ router.get('/:id', userByIdControl);
  * @throws {Error} 404 - Usuario no encontrado.
  * @throws {Error} 500 - Error interno del servidor.
  */
-router.put('/:id', [checkUpdate, checkResult], userUpdateControl);
+router.put('/:uid', [checkUpdate, checkResult], userUpdateControl);
 
 
 

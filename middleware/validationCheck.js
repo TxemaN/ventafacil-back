@@ -75,7 +75,7 @@ const checkUpdate = [
         .isLength({ min: 5 }).withMessage('El nombre de usuario debe tener al menos 5 caracteres'),
 
     // Validación para 'email'
-    check('email', 'Email obligatorio').isEmail(),
+    // check('email', 'Email obligatorio').isEmail(),
 
     // Validación para 'contacto'
     check('contacto', 'Contacto obligatorio').not().isEmpty(),

@@ -60,7 +60,18 @@ router.post('/buscar', userBuscarControl);
  */
 router.get('/:id', userByIdControl);
 
-router.post('/uid/:uid', userByUidControl)
+/**
+ * Ruta para obtener la información de un usuario basada en su UID.
+ * 
+ * @module
+ * @function
+ * @param {string} path - La ruta '/uid/:uid' donde :uid es el identificador único del usuario.
+ * @param {function} handler - El controlador userByUidControl que maneja la lógica para esta ruta.
+ * @returns {undefined} No retorna nada.
+ * @throws Se lanzará un error si hay un problema con la conexión o la ejecución de la ruta.
+**/
+router.post('/uid/:uid', userByUidControl);
+
 
 
 /**

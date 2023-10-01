@@ -20,7 +20,7 @@ CREATE TABLE Anuncios (
     Precio DECIMAL(10,2),
     Categoria VARCHAR(50),
     Zona_Geografica VARCHAR(255),
-    ID_Vendedor INT REFERENCES Usuarios(ID),
+    ID_Vendedor VARCHAR(255),
     Fecha_Anuncio TIMESTAMP DEFAULT NOW(),
     Ruta_foto VARCHAR(255),
     Precio_Stripe VARCHAR(255),
@@ -58,6 +58,15 @@ CREATE TABLE Categorias (
     Descripcion VARCHAR(255),
     Ruta_Foto VARCHAR(255),
 );
+
+-- Tabla Categorias
+
+CREATE TABLE Categorias (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Nombre VARCHAR(255),
+    Descripcion VARCHAR(255),
+    Ruta_Foto VARCHAR(255)
+)
 
 
 

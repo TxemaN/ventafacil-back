@@ -170,17 +170,31 @@ const getByCategory = async (req, res) => {
 };
 
 
+const getByCategoryParam = async (req, res) => {
+    //   
+    let data;
+    try {
+        const categoria = req.params.categoria;
 
+        data = await getByCategoria(categoria);
 
-/**
- * Controlador para crear anuncios en la plataforma.
- * 
- * @function createAds
- * @async
- * @param {Object} req - Objeto de solicitud HTTP, que contiene en el cuerpo los datos necesarios para crear un anuncio.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Object} - Retorna una respuesta con el estado HTTP y un mensaje indicando si el anuncio fue creado exitosamente o un mensaje de error.
- */
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por categoria'
+        });
+
+    }
+};
+
+/** Controlador para crear anuncios*/
+
 const createAds = async (req, res) => {
     try {
         // Desestructuración de los datos necesarios del cuerpo de la solicitud.
@@ -359,5 +373,6 @@ module.exports = {
     getByName,
     getByUserName,
     getByIdUser,
-    getByCategory
+    getByCategory,
+    getByCategoryParam
 }

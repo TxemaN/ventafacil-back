@@ -48,6 +48,7 @@ const getByNombre = async (nombre) => {
     } finally {
       client.release();
     }
+
     return result;
 };
 

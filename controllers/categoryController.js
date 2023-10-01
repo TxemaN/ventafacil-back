@@ -67,28 +67,50 @@ const getPorNombre = async (req, res) => {
     }
 };
 
-/**
- * Controlador para crear una nueva categoría.
- *
- * @function createCategory
- * @async
- * @param {Object} req - Objeto de solicitud HTTP, que contiene en el cuerpo los datos de la nueva categoría.
- * @param {Object} res - Objeto de respuesta HTTP.
- * @returns {Object} - Retorna una respuesta con el estado HTTP y un mensaje de éxito o de error.
- */
+
+const getPorNombreComoParam = async (req, res) => {
+    //   
+    let data;
+    try {
+        const id_categoria = req.params.nombre;
+
+        data = await getByNombre( Nombre );
+
+
+      return  res.status(200).json({
+            ok: true,
+            data: data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por nombre'
+        });
+
+    }
+};
+
+
 const createCategory = async (req, res) => {
     try {
-        const { Nombre } = req.body;  // Asume que la nueva categoría solo necesita un nombre.
+        const { nombre, descripcion, ruta_foto } = req.body
+            
+        
+        let data = await postCats(nombre, descripcion, ruta_foto);
+        if (data.ok) {
+          
+            
+          return  res.status(200).json({
+                ok: true,
+                msg: 'Categoría añadida',
+                data
+               
+            });
+        } else {
+            throw new Error('Error al añadir categoría');
+        }
 
-        // Crear la nueva categoría.
-        const data = await createNewCategory(Nombre);  // Asume una función que maneja la creación de la categoría.
-
-        // Retornar la respuesta con el estado de éxito.
-        return res.status(200).json({
-            ok: true,
-            msg: 'Categoría creada exitosamente.',
-            data  // Opcional: incluir los datos de la categoría creada.
-        });
     } catch (error) {
         console.log(error);
         // En caso de error, retornar un mensaje de error.
@@ -133,6 +155,7 @@ const deleteCats = async (req, res) => {
 module.exports = {
     getCategorias,
     getPorNombre,
+    getPorNombreComoParam,
     createCategory,
     deleteCats
 

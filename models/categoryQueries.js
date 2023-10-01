@@ -10,6 +10,7 @@ const querieCats = {
      */
     byTodas: 'SELECT * FROM categorias',
     
+
     /**
      * Consulta que obtiene una categoría específica de la tabla usando su ID.
      * @type {string}
@@ -32,6 +33,7 @@ const querieCats = {
      * Consulta que elimina una categoría de la tabla usando su ID.
      * @type {string}
      */
+
     byBorrarUna: 'DELETE FROM categorias WHERE id_categoria = $1'
 };
 

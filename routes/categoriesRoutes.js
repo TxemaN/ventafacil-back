@@ -4,18 +4,13 @@ const router = express.Router();
 const {
      getCategorias,
     getPorNombre,
+    getPorNombreComoParam,
     createCategory,
     deleteCats } = require('../controllers/categoryController')
 
+router.get('/', getCategorias)
+router.get('/pornombre/:nombre', getCategorias)
 
-/** 
- * Ruta para obtener todas las categorías.
- * 
- * @name getCategorias
- * @path {GET} /
- * @action getCategorias
- */
-router.get('/', getCategorias);
 
 /** 
  * Ruta para crear una nueva categoría.

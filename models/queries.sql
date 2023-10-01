@@ -52,10 +52,11 @@ CREATE TABLE Historial_Ventas (
     ID_Anuncio INT REFERENCES Anuncios(ID_Anuncio),
     Fecha_Venta TIMESTAMP DEFAULT NOW()
 );
-CREATE TABLE Fotos (
-    ID_Foto SERIAL PRIMARY KEY,
-    ID_Anuncio INT REFERENCES Anuncios(ID_Anuncio),
-    Ruta_Foto VARCHAR(255)
+CREATE TABLE Categorias (
+    ID_Categoria SERIAL PRIMARY KEY,
+    Nombre VARCHAR(255),
+    Descripcion VARCHAR(255),
+    Ruta_Foto VARCHAR(255),
 );
 
 

@@ -37,13 +37,13 @@ const getAllCategories = async () => {
     return result
   };
 
-  const postCats = async (nombre, descripcion) => {
+  const postCats = async (nombre, descripcion, ruta_foto) => {
     let client, result;
     try {
       client = await pool.connect();
   
   
-      const data = await client.query(querieCats.byInsertCat, [nombre, descripcion]);
+      const data = await client.query(querieCats.byInsertCat, [nombre, descripcion, ruta_foto]);
   
       result = data.rows[0];
   

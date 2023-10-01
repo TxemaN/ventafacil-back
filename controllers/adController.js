@@ -146,6 +146,29 @@ const getByCategory = async (req, res) => {
     }
 };
 
+const getByCategoryParam = async (req, res) => {
+    //   
+    let data;
+    try {
+        const categoria = req.params.categoria;
+
+        data = await getByCategoria(categoria);
+
+        //RETURN ADEMÁS DE STATUS
+        return res.status(200).json({
+            ok: true,
+            data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por categoria'
+        });
+
+    }
+};
+
 /** Controlador para crear anuncios*/
 const createAds = async (req, res) => {
     try {
@@ -294,5 +317,6 @@ module.exports = {
     getByName,
     getByUserName,
     getByIdUser,
-    getByCategory
+    getByCategory,
+    getByCategoryParam
 }

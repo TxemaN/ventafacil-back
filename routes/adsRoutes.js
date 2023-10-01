@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   }
 })
 const upload = multer({ storage: storage })
-const {getAds, createAds, actualizarAds, deleteAds, getOneById, getByName, getByUserName, getByIdUser, getByCategory} = require('../controllers/adController')
+const {getAds, createAds, actualizarAds, deleteAds, getOneById, getByName, getByUserName, getByIdUser, getByCategory, getByCategoryParam} = require('../controllers/adController')
 
 //getAds
 router.get('/', getAds)
@@ -31,6 +31,10 @@ router.get('/buscaridusuario/:id_vendedor', getByIdUser )
 
 //BUSCAR POR CATEGORIA
 router.post('/buscarcategoria', getByCategory)
+
+router.get('/categoriaparam/:categoria', getByCategoryParam)
+
+
 
 //createAds
 router.post('/anunciar', [upload.single('imagen_anuncio'), checkCreateAd, checkResult],  createAds)

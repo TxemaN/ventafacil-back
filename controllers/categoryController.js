@@ -46,12 +46,36 @@ const getPorNombre = async (req, res) => {
     }
 };
 
+const getPorNombreComoParam = async (req, res) => {
+    //   
+    let data;
+    try {
+        const id_categoria = req.params.nombre;
+
+        data = await getByNombre( Nombre );
+
+
+      return  res.status(200).json({
+            ok: true,
+            data: data
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            ok: true,
+            msg: 'No pilla la query por nombre'
+        });
+
+    }
+};
+
+
 const createCategory = async (req, res) => {
     try {
-        const { nombre, descripcion } = req.body
+        const { nombre, descripcion, ruta_foto } = req.body
             
         
-        let data = await postCats(nombre, descripcion);
+        let data = await postCats(nombre, descripcion, ruta_foto);
         if (data.ok) {
           
             
@@ -104,6 +128,7 @@ const deleteCats = async (req, res) => {
 module.exports = {
     getCategorias,
     getPorNombre,
+    getPorNombreComoParam,
     createCategory,
     deleteCats
 

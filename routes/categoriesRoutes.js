@@ -3,11 +3,12 @@ const router = express.Router();
 
 const { getCategorias,
     getPorNombre,
+    getPorNombreComoParam,
     createCategory,
     deleteCats} = require('../controllers/categoryController')
 
 router.get('/', getCategorias)
-
+router.get('/pornombre/:nombre', getCategorias)
 
 router.post('/agregar',  createCategory)
 

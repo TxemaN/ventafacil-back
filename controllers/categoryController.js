@@ -48,10 +48,10 @@ const getPorNombre = async (req, res) => {
 
 const createCategory = async (req, res) => {
     try {
-        const { nombre } = req.body
+        const { nombre, descripcion } = req.body
             
         
-        let data = await postCats(nombre);
+        let data = await postCats(nombre, descripcion);
         if (data.ok) {
           
             

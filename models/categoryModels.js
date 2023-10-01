@@ -5,7 +5,7 @@ const getAllCategories = async () => {
     let client, result;
     try {
       client = await pool.connect();
-      const data = await client.query(querieCats.byAll);
+      const data = await client.query(querieCats.byTodas);
       result = await data.rows
     } catch (error) {
       console.log(error);

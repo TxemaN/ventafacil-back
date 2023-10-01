@@ -22,8 +22,6 @@ app.use('/api/v1/ventafacil/categories', require('./routes/categoriesRoutes'));
 
 app.use('/api/v1/users', require("./routes/userRoutes"));
 
-app.use('/api/v1/auth', require('./routes/authRoutes'));
-
 app.listen(port, () => {
     console.log(`Servidor ON en ${port}`)
 })

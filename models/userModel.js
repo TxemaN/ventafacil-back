@@ -115,7 +115,15 @@ const getUserById = async (id) => {
     }
 };
 
-
+/**
+ * Esta función obtiene un usuario de la base de datos basándose en su UID.
+ *
+ * @async
+ * @function
+ * @param {string} uid - El UID del usuario que se quiere obtener.
+ * @returns {Promise<Object>} El objeto del usuario si se encuentra, undefined si no se encuentra.
+ * @throws Se lanzará un error si hay un problema con la conexión a la base de datos o la consulta.
+ */
 const getUserByUid = async (uid) => {
     try {
         const client = await pool.connect();

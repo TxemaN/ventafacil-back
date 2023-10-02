@@ -274,20 +274,22 @@ const createAds = async (req, res) => {
  * @returns {Object} - Retorna una respuesta con el estado HTTP y un mensaje indicando si el anuncio fue actualizado exitosamente o un mensaje de error.
  */
 const actualizarAds = async (req, res) => {
+    let data;
     try {
         const id_anuncio = req.params.id_anuncio;
         const { producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, imagen_anuncio, producto_stripe } = req.body;
-        const ruta_foto = `uploads/${imagen_anuncio}`;
+        const ruta_foto = `uploads/${imagen_anuncio}`
 
         const originalData = await getById(id_anuncio);
+
 
         if (producto === originalData.producto && descripcion === originalData.descripcion) {
             return res.status(200).json({
                 ok: true,
                 msg: 'Anuncio actualizado.',
             });
-        }
 
+        }
         const product = await stripe.products.update(producto_stripe,
             {
                 name: producto,
@@ -307,10 +309,12 @@ const actualizarAds = async (req, res) => {
                     quantity: 1,
                 },
             ],
+            
         });
+        
+        let Enlace_Pago = paymentLink.url
+        data = await updateAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto, Precio_Stripe, Enlace_Pago, id_anuncio);
 
-        let Enlace_Pago = paymentLink.url;
-        const data = await updateAds(producto, descripcion, precio, categoria, zona_geografica, ID_vendedor, ruta_foto, Precio_Stripe, Enlace_Pago, id_anuncio);
 
         const updatedData = await getById(id_anuncio);
 

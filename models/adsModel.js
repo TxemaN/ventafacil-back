@@ -235,13 +235,13 @@ const postAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica
  * @throws {Error} Lanza un error si hay un problema al actualizar el anuncio.
  * @return {Promise<Object>} Devuelve una promesa que se resuelve en el objeto del anuncio actualizado.
  */
-const updateAds = async (Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_Foto,  Precio_Stripe, Enlace_Pago, id_anuncio) => {
+const updateAds = async (producto, descripcion, precio, categoria, zona_Geografica, id_Vendedor, ruta_foto,  precio_Stripe, enlace_pago, id_anuncio) => {
   let client, result;
   try {
     client = await pool.connect();
 
 
-    const data = await client.query(querieAds.byActualizar, [Producto, Descripcion, Precio, Categoria, Zona_Geografica, ID_Vendedor, Ruta_Foto, Precio_Stripe, Enlace_Pago, id_anuncio]);
+    const data = await client.query(querieAds.byActualizar, [producto, descripcion, precio, categoria, zona_Geografica, id_Vendedor, ruta_foto,  precio_Stripe, enlace_pago, id_anuncio]);
 
     result = data.rows[0];
 
